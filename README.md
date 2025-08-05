@@ -1,6 +1,6 @@
 # Système de Newsletter Automatisée via GitHub et Mailchimp
 
-![Statut du Workflow](https://github.com/VOTRE_NOM_UTILISATEUR/NOM_DE_VOTRE_DEPOT/actions/workflows/newsletter.yml/badge.svg)
+![Statut du Workflow](https://github.com/vfarcy/nl_LinkedIN/actions/workflows/newsletter.yml/badge.svg)
 
 Ce dépôt contient l'ensemble du système permettant d'automatiser la création et l'envoi d'une newsletter. L'objectif est de se concentrer uniquement sur l'écriture du contenu en Markdown, et de laisser la magie de GitHub Actions et de l'API Mailchimp s'occuper de tout le reste.
 
