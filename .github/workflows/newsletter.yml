@@ -1,7 +1,6 @@
-# Nom de notre automatisation
 name: Envoyer la Newsletter avec Mailchimp (avec Test et Nettoyage)
 
-# Déclencheur : s'exécute quand on ajoute un fichier .md dans le dossier 'newsletters'
+# Se déclenche quand un fichier .md est modifié ou ajouté dans le dossier 'newsletters'
 on:
   push:
     branches:
@@ -9,62 +8,102 @@ on:
     paths:
       - 'newsletters/**.md'
 
-# Les tâches à exécuter
 jobs:
   # TÂCHE 1 : CONSTRUIRE LA CAMPAGNE ET ENVOYER UN TEST
   build_and_test:
     runs-on: ubuntu-latest
+    # Les "outputs" permettent de passer des informations à la tâche suivante
     outputs:
       campaign_id: ${{ steps.create_campaign.outputs.campaign_id }}
+      skipped: ${{ steps.create_campaign.outputs.skipped }}
     steps:
+      # Étape 1.1 : Récupère le code de votre dépôt
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      # Étape 1.2 : Configure l'environnement Python
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.x'
 
+      # Étape 1.3 : Installe les outils Python nécessaires
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install requests markdown beautifulsoup4
 
+      # Étape 1.4 : Crée la campagne, injecte le contenu (avec la correction)
       - name: Create Campaign and Add Content
-        id: create_campaign
+        id: create_campaign # On donne un ID à cette étape pour récupérer ses outputs
         run: |
+          # On déplace toute la logique dans un seul script Python pour plus de propreté
           python -c "
-          import os, requests, json, markdown
+          import os
+          import sys
+          import requests
+          import json
+          import markdown
+          import subprocess
           from bs4 import BeautifulSoup
-          # ... (tout le code Python pour créer la campagne et injecter le contenu) ...
+
+          # --- ÉTAPE CORRIGÉE : VÉRIFIER SI UN FICHIER EST PRÉSENT ---
+          newsletter_file = None
+          try:
+              # On exécute la commande git pour trouver le fichier .md modifié
+              git_command = 'git diff-tree --no-commit-id --name-only -r HEAD | grep \"newsletters/.*\\.md$\"'
+              result = subprocess.run(git_command, shell=True, check=True, capture_output=True, text=True)
+              # On prend la première ligne du résultat au cas où il y aurait plusieurs fichiers
+              newsletter_file = result.stdout.strip().split('\n')[0]
+          except (subprocess.CalledProcessError, IndexError):
+              # Si la commande échoue ou ne renvoie rien, on ne fait rien
+              pass
+          
+          # Si aucun fichier n'a été trouvé, on arrête le processus proprement
+          if not newsletter_file:
+              print('Aucun fichier .md trouvé dans le dossier /newsletters pour ce commit. Annulation du workflow.')
+              print('::set-output name=skipped::true')
+              sys.exit(0)
+
+          # Si on arrive ici, un fichier a été trouvé. On continue normalement.
+          print(f'Fichier de newsletter trouvé : {newsletter_file}')
+          print('::set-output name=skipped::false')
+
+          # --- CONFIGURATION (ne change pas) ---
           API_KEY = os.environ.get('MAILCHIMP_API_KEY')
           AUDIENCE_ID = os.environ.get('MAILCHIMP_AUDIENCE_ID')
           SERVER_PREFIX = os.environ.get('MAILCHIMP_SERVER_PREFIX')
           TEMPLATE_ID = int(os.environ.get('MAILCHIMP_TEMPLATE_ID'))
           MC_EDIT_REGION_NAME = 'main_content'
-          NEWSLETTER_FILE = '$(git diff-tree --no-commit-id --name-only -r HEAD | grep 'newsletters/.*\.md$')'
           API_URL = f'https://{SERVER_PREFIX}.api.mailchimp.com/3.0/'
           HEADERS = {'Authorization': f'Bearer {API_KEY}'}
-          with open(NEWSLETTER_FILE, 'r', encoding='utf-8') as f:
+
+          # --- Lire et convertir le Markdown (ne change pas) ---
+          with open(newsletter_file, 'r', encoding='utf-8') as f:
               html_content = markdown.markdown(f.read())
           soup = BeautifulSoup(html_content, 'html.parser')
           email_subject = soup.find('h1').text if soup.find('h1') else 'Ma Nouvelle Newsletter'
           print(f'Sujet de l\'email détecté : {email_subject}')
+
+          # --- Créer la campagne (ne change pas) ---
           campaign_data = {'type': 'regular', 'recipients': {'list_id': AUDIENCE_ID}, 'settings': {'subject_line': email_subject, 'from_name': 'Le Nom de votre Newsletter', 'reply_to': 'votre.email@reponse.com', 'template_id': TEMPLATE_ID}}
           try:
               r = requests.post(f'{API_URL}/campaigns', headers=HEADERS, json=campaign_data)
               r.raise_for_status()
               campaign_id = r.json()['id']
               print(f'Campagne créée avec succès. ID : {campaign_id}')
+              # On expose l'ID de la campagne pour les étapes suivantes
               print(f'::set-output name=campaign_id::{campaign_id}')
           except Exception as e:
-              print(f'Erreur lors de la création de la campagne: {e}'); exit(1)
+              print(f'Erreur lors de la création de la campagne: {e}'); sys.exit(1)
+          
+          # --- Injecter le contenu (ne change pas) ---
           content_data = {'template': {'id': TEMPLATE_ID, 'sections': {MC_EDIT_REGION_NAME: html_content}}}
           try:
               requests.put(f'{API_URL}/campaigns/{campaign_id}/content', headers=HEADERS, json=content_data).raise_for_status()
               print('Contenu injecté dans le template avec succès.')
           except Exception as e:
-              print(f'Erreur lors de l\'injection du contenu: {e}'); exit(1)
+              print(f'Erreur lors de l\'injection du contenu: {e}'); sys.exit(1)
           "
         env:
           MAILCHIMP_API_KEY: ${{ secrets.MAILCHIMP_API_KEY }}
@@ -72,16 +111,23 @@ jobs:
           MAILCHIMP_SERVER_PREFIX: ${{ secrets.MAILCHIMP_SERVER_PREFIX }}
           MAILCHIMP_TEMPLATE_ID: ${{ secrets.MAILCHIMP_TEMPLATE_ID }}
 
+      # Étape 1.5 : Envoyer l'e-mail de test
       - name: Send Test Email
+        # Cette étape ne s'exécute que si la précédente n'a pas été sautée
+        if: steps.create_campaign.outputs.skipped != 'true'
         run: |
           CAMPAIGN_ID=${{ steps.create_campaign.outputs.campaign_id }}
           TEST_EMAILS='${{ secrets.MAILCHIMP_TEST_EMAIL }}'.split(',')
+          
           import os, requests, json
+          
           API_KEY = os.environ.get('MAILCHIMP_API_KEY')
           SERVER_PREFIX = os.environ.get('MAILCHIMP_SERVER_PREFIX')
           API_URL = f'https://{SERVER_PREFIX}.api.mailchimp.com/3.0/'
           HEADERS = {'Authorization': f'Bearer {API_KEY}'}
+          
           test_data = {'test_emails': TEST_EMAILS, 'send_type': 'html'}
+          
           try:
               requests.post(f'{API_URL}/campaigns/{CAMPAIGN_ID}/actions/test', headers=HEADERS, json=test_data).raise_for_status()
               print(f"Email de test envoyé avec succès à : {TEST_EMAILS}")
@@ -92,15 +138,19 @@ jobs:
           MAILCHIMP_SERVER_PREFIX: ${{ secrets.MAILCHIMP_SERVER_PREFIX }}
           MAILCHIMP_TEST_EMAIL: ${{ secrets.MAILCHIMP_TEST_EMAIL }}
 
-  # TÂCHE 2 : ENVOYER LA CAMPAGNE EN PRODUCTION
+  # TÂCHE 2 : ENVOYER LA CAMPAGNE EN PRODUCTION (APRÈS APPROBATION)
   send_to_production:
+    # Dépend de la réussite de la première tâche
     needs: build_and_test
-    environment: Production # On lie au sas de sécurité
+    # Ne s'exécute que si la première tâche n'a pas été sautée
+    if: needs.build_and_test.outputs.skipped != 'true'
+    # C'est ici qu'on lie la tâche à l'environnement protégé
+    environment: Production
     runs-on: ubuntu-latest
     steps:
+      # Étape 2.1 : Envoi de la campagne finale
       - name: Send Final Campaign
         run: |
-          # ... (script pour l'envoi final) ...
           CAMPAIGN_ID=${{ needs.build_and_test.outputs.campaign_id }}
           import os, requests
           API_KEY = os.environ.get('MAILCHIMP_API_KEY')
@@ -116,10 +166,11 @@ jobs:
           MAILCHIMP_API_KEY: ${{ secrets.MAILCHIMP_API_KEY }}
           MAILCHIMP_SERVER_PREFIX: ${{ secrets.MAILCHIMP_SERVER_PREFIX }}
 
+      # Étape 2.2 : Nettoyage en cas de rejet
       - name: Cleanup Campaign on Rejection
-        if: failure() # Ne s'exécute que si on rejette !
+        # Ne s'exécute que si le job échoue (c'est-à-dire si vous rejetez)
+        if: failure()
         run: |
-          # ... (script pour supprimer la campagne brouillon) ...
           CAMPAIGN_ID=${{ needs.build_and_test.outputs.campaign_id }}
           import os, requests
           API_KEY = os.environ.get('MAILCHIMP_API_KEY')
@@ -135,3 +186,5 @@ jobs:
         env:
           MAILCHIMP_API_KEY: ${{ secrets.MAILCHIMP_API_KEY }}
           MAILCHIMP_SERVER_PREFIX: ${{ secrets.MAILCHIMP_SERVER_PREFIX }}
+
+          
