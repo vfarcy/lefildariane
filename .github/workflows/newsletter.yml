@@ -38,23 +38,20 @@ jobs:
 
       # Étape 1.4 : Crée la campagne, injecte le contenu
       - name: Create Campaign and Add Content
-        id: create_campaign # On donne un ID à cette étape pour récupérer ses outputs
+        id: create_campaign
         env:
+          # On passe tous les secrets nécessaires à l'environnement du script
           MAILCHIMP_API_KEY: ${{ secrets.MAILCHIMP_API_KEY }}
           MAILCHIMP_AUDIENCE_ID: ${{ secrets.MAILCHIMP_AUDIENCE_ID }}
           MAILCHIMP_SERVER_PREFIX: ${{ secrets.MAILCHIMP_SERVER_PREFIX }}
           MAILCHIMP_TEMPLATE_ID: ${{ secrets.MAILCHIMP_TEMPLATE_ID }}
-          # On récupère les identifiants de commits de l'événement de push
+          MAILCHIMP_FROM_NAME: ${{ secrets.MAILCHIMP_FROM_NAME }}
+          MAILCHIMP_REPLY_TO_EMAIL: ${{ secrets.MAILCHIMP_REPLY_TO_EMAIL }}
           BEFORE_SHA: ${{ github.event.before }}
           AFTER_SHA: ${{ github.event.after }}
         run: |
           python -c "
-          import os
-          import sys
-          import requests
-          import json
-          import markdown
-          import subprocess
+          import os, sys, requests, json, markdown, subprocess
           from bs4 import BeautifulSoup
 
           # --- VÉRIFICATION DU FICHIER (MÉTHODE ROBUSTE) ---
@@ -84,6 +81,10 @@ jobs:
           MC_EDIT_REGION_NAME = 'main_content'
           API_URL = f'https://{SERVER_PREFIX}.api.mailchimp.com/3.0/'
           HEADERS = {'Authorization': f'Bearer {API_KEY}'}
+          
+          # On lit le nom et l'e-mail de l'expéditeur depuis les secrets
+          from_name = os.environ.get('MAILCHIMP_FROM_NAME')
+          reply_to_email = os.environ.get('MAILCHIMP_REPLY_TO_EMAIL')
 
           # --- LECTURE ET CONVERSION ---
           with open(newsletter_file, 'r', encoding='utf-8') as f:
@@ -93,7 +94,13 @@ jobs:
           print(f'Sujet de l\'email détecté : {email_subject}')
 
           # --- CRÉATION DE LA CAMPAGNE ---
-          campaign_data = {'type': 'regular', 'recipients': {'list_id': AUDIENCE_ID}, 'settings': {'subject_line': email_subject, 'from_name': 'Le Nom de votre Newsletter', 'reply_to': 'votre.email@reponse.com', 'template_id': TEMPLATE_ID}}
+          campaign_data = {'type': 'regular', 'recipients': {'list_id': AUDIENCE_ID}, 'settings': {
+              'subject_line': email_subject, 
+              'from_name': from_name, 
+              'reply_to': reply_to_email,
+              'template_id': TEMPLATE_ID
+            }
+          }
           try:
               r = requests.post(f'{API_URL}/campaigns', headers=HEADERS, json=campaign_data)
               r.raise_for_status()
@@ -193,3 +200,6 @@ jobs:
           except Exception as e:
               print(f'Erreur lors de la suppression de la campagne brouillon : {e}')
           "
+
+
+          
