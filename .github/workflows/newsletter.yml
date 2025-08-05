@@ -36,11 +36,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install requests markdown beautifulsoup4
 
-      # Étape 1.4 : Crée la campagne, injecte le contenu
+      # Étape 1.4 : Crée la campagne, injecte le contenu (AVEC LOGS DE DÉBOGAGE)
       - name: Create Campaign and Add Content
         id: create_campaign
         env:
-          # On passe tous les secrets nécessaires à l'environnement du script
           MAILCHIMP_API_KEY: ${{ secrets.MAILCHIMP_API_KEY }}
           MAILCHIMP_AUDIENCE_ID: ${{ secrets.MAILCHIMP_AUDIENCE_ID }}
           MAILCHIMP_SERVER_PREFIX: ${{ secrets.MAILCHIMP_SERVER_PREFIX }}
@@ -54,7 +53,7 @@ jobs:
           import os, sys, requests, json, markdown, subprocess
           from bs4 import BeautifulSoup
 
-          # --- VÉRIFICATION DU FICHIER (MÉTHODE ROBUSTE) ---
+          # --- VÉRIFICATION DU FICHIER ---
           newsletter_file = None
           try:
               before_sha = os.environ.get('BEFORE_SHA')
@@ -81,26 +80,24 @@ jobs:
           MC_EDIT_REGION_NAME = 'main_content'
           API_URL = f'https://{SERVER_PREFIX}.api.mailchimp.com/3.0/'
           HEADERS = {'Authorization': f'Bearer {API_KEY}'}
-          
-          # On lit le nom et l'e-mail de l'expéditeur depuis les secrets
           from_name = os.environ.get('MAILCHIMP_FROM_NAME')
           reply_to_email = os.environ.get('MAILCHIMP_REPLY_TO_EMAIL')
 
           # --- LECTURE ET CONVERSION ---
           with open(newsletter_file, 'r', encoding='utf-8') as f:
               html_content = markdown.markdown(f.read())
+          
+          # --- LOG DE DÉBOGAGE N°1 ---
+          print('--- DEBUT DU CONTENU HTML CONVERTI ---')
+          print(html_content)
+          print('--- FIN DU CONTENU HTML CONVERTI ---')
+
           soup = BeautifulSoup(html_content, 'html.parser')
           email_subject = soup.find('h1').text if soup.find('h1') else 'Ma Nouvelle Newsletter'
           print(f'Sujet de l\'email détecté : {email_subject}')
-
+          
           # --- CRÉATION DE LA CAMPAGNE ---
-          campaign_data = {'type': 'regular', 'recipients': {'list_id': AUDIENCE_ID}, 'settings': {
-              'subject_line': email_subject, 
-              'from_name': from_name, 
-              'reply_to': reply_to_email,
-              'template_id': TEMPLATE_ID
-            }
-          }
+          campaign_data = {'type': 'regular', 'recipients': {'list_id': AUDIENCE_ID}, 'settings': {'subject_line': email_subject, 'from_name': from_name, 'reply_to': reply_to_email, 'template_id': TEMPLATE_ID}}
           try:
               r = requests.post(f'{API_URL}/campaigns', headers=HEADERS, json=campaign_data)
               r.raise_for_status()
@@ -112,6 +109,12 @@ jobs:
           
           # --- INJECTION DU CONTENU ---
           content_data = {'template': {'id': TEMPLATE_ID, 'sections': {MC_EDIT_REGION_NAME: html_content}}}
+          
+          # --- LOG DE DÉBOGAGE N°2 ---
+          print('--- DEBUT DES DONNÉES ENVOYÉES À MAILCHIMP ---')
+          print(json.dumps(content_data, indent=2))
+          print('--- FIN DES DONNÉES ENVOYÉES À MAILCHIMP ---')
+          
           try:
               requests.put(f'{API_URL}/campaigns/{campaign_id}/content', headers=HEADERS, json=content_data).raise_for_status()
               print('Contenu injecté dans le template avec succès.')
