@@ -20,6 +20,9 @@ jobs:
       # Étape 1.1 : Récupère le code de votre dépôt
       - name: Checkout repository
         uses: actions/checkout@v3
+        with:
+          # On récupère tout l'historique pour pouvoir faire la comparaison entre les commits
+          fetch-depth: 0
 
       # Étape 1.2 : Configure l'environnement Python
       - name: Set up Python
@@ -33,11 +36,18 @@ jobs:
           python -m pip install --upgrade pip
           pip install requests markdown beautifulsoup4
 
-      # Étape 1.4 : Crée la campagne, injecte le contenu (avec la correction)
+      # Étape 1.4 : Crée la campagne, injecte le contenu (VERSION CORRIGÉE ET ROBUSTE)
       - name: Create Campaign and Add Content
         id: create_campaign # On donne un ID à cette étape pour récupérer ses outputs
+        env:
+          MAILCHIMP_API_KEY: ${{ secrets.MAILCHIMP_API_KEY }}
+          MAILCHIMP_AUDIENCE_ID: ${{ secrets.MAILCHIMP_AUDIENCE_ID }}
+          MAILCHIMP_SERVER_PREFIX: ${{ secrets.MAILCHIMP_SERVER_PREFIX }}
+          MAILCHIMP_TEMPLATE_ID: ${{ secrets.MAILCHIMP_TEMPLATE_ID }}
+          # On récupère les identifiants de commits de l'événement de push
+          BEFORE_SHA: ${{ github.event.before }}
+          AFTER_SHA: ${{ github.event.after }}
         run: |
-          # On déplace toute la logique dans un seul script Python pour plus de propreté
           python -c "
           import os
           import sys
@@ -47,12 +57,18 @@ jobs:
           import subprocess
           from bs4 import BeautifulSoup
 
-          # --- ÉTAPE CORRIGÉE : VÉRIFIER SI UN FICHIER EST PRÉSENT ---
+          # --- ÉTAPE CORRIGÉE : VÉRIFIER SI UN FICHIER EST PRÉSENT (MÉTHODE ROBUSTE) ---
           newsletter_file = None
           try:
-              # On exécute la commande git pour trouver le fichier .md modifié
-              git_command = 'git diff-tree --no-commit-id --name-only -r HEAD | grep \"newsletters/.*\\.md$\"'
+              # On récupère les identifiants de commit depuis les variables d'environnement
+              before_sha = os.environ.get('BEFORE_SHA')
+              after_sha = os.environ.get('AFTER_SHA')
+              
+              # La nouvelle commande compare tous les fichiers modifiés entre les deux commits
+              # et ne garde que les fichiers .md dans le bon dossier
+              git_command = f'git diff --name-only {before_sha} {after_sha} | grep \"newsletters/.*\\.md$\"'
               result = subprocess.run(git_command, shell=True, check=True, capture_output=True, text=True)
+              
               # On prend la première ligne du résultat au cas où il y aurait plusieurs fichiers
               newsletter_file = result.stdout.strip().split('\n')[0]
           except (subprocess.CalledProcessError, IndexError):
@@ -61,13 +77,14 @@ jobs:
           
           # Si aucun fichier n'a été trouvé, on arrête le processus proprement
           if not newsletter_file:
-              print('Aucun fichier .md trouvé dans le dossier /newsletters pour ce commit. Annulation du workflow.')
-              print('::set-output name=skipped::true')
+              print('Aucun fichier .md trouvé dans les commits de ce push. Annulation du workflow.')
+              # On définit l'output 'skipped' pour que les tâches suivantes ne s'exécutent pas
+              print(f'::set-output name=skipped::true')
               sys.exit(0)
 
           # Si on arrive ici, un fichier a été trouvé. On continue normalement.
           print(f'Fichier de newsletter trouvé : {newsletter_file}')
-          print('::set-output name=skipped::false')
+          print(f'::set-output name=skipped::false')
 
           # --- CONFIGURATION (ne change pas) ---
           API_KEY = os.environ.get('MAILCHIMP_API_KEY')
@@ -105,11 +122,6 @@ jobs:
           except Exception as e:
               print(f'Erreur lors de l\'injection du contenu: {e}'); sys.exit(1)
           "
-        env:
-          MAILCHIMP_API_KEY: ${{ secrets.MAILCHIMP_API_KEY }}
-          MAILCHIMP_AUDIENCE_ID: ${{ secrets.MAILCHIMP_AUDIENCE_ID }}
-          MAILCHIMP_SERVER_PREFIX: ${{ secrets.MAILCHIMP_SERVER_PREFIX }}
-          MAILCHIMP_TEMPLATE_ID: ${{ secrets.MAILCHIMP_TEMPLATE_ID }}
 
       # Étape 1.5 : Envoyer l'e-mail de test
       - name: Send Test Email
