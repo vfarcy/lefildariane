@@ -1,16 +1,19 @@
-# Système de Newsletter Automatisée via GitHub et Mailchimp
+# Système de Newsletter Automatisée (GitHub & Mailchimp)
 
-![Statut du Workflow](https://github.com/vfarcy/nl_LinkedIN/actions/workflows/newsletter.yml/badge.svg)
+![Statut du Workflow](https://github.com/vfarcy/actions/workflows/newsletter.yml/badge.svg)
 
-Ce dépôt contient l'ensemble du système permettant d'automatiser la création et l'envoi d'une newsletter. L'objectif est de se concentrer uniquement sur l'écriture du contenu en Markdown, et de laisser la magie de GitHub Actions et de l'API Mailchimp s'occuper de tout le reste.
+Ce dépôt héberge un système d'automatisation complet pour la création et l'envoi de newsletters. Le principe est de séparer entièrement la rédaction du contenu de la complexité technique de l'envoi. L'utilisateur se concentre uniquement sur l'écriture d'un fichier Markdown, et une GitHub Action gère la mise en page, les tests et la distribution via l'API Mailchimp.
 
-## ✨ Fonctionnalités Principales
+## ✨ Fonctionnalités
 
-* **Rédaction en Markdown** : Écrivez vos newsletters dans un format simple et lisible.
-* **Templates Professionnels** : Le contenu est automatiquement injecté dans un template Mailchimp personnalisé.
-* **Automatisation Complète** : Un simple `git push` déclenche tout le processus.
-* **Cycle de Validation Sécurisé** : Un e-mail de test est envoyé pour validation avant tout envoi final. Le workflow se met en pause en attendant une approbation manuelle.
-* **Auto-Nettoyage** : En cas de rejet de l'envoi de test, la campagne brouillon est automatiquement supprimée de Mailchimp pour garder un environnement propre.
+- **Rédaction Simplifiée** : Écriture des newsletters en format Markdown simple et intuitif.
+- **Templates Professionnels** : Le contenu est automatiquement injecté dans un template HTML personnalisé sur Mailchimp, assurant une cohérence de marque.
+- **Automatisation via `git push`** : Le simple fait de pousser un nouveau fichier de newsletter sur le dépôt déclenche l'ensemble du processus.
+- **Cycle de Validation Sécurisé** : Un e-mail de test est automatiquement envoyé à une adresse prédéfinie. Le workflow se met en pause et attend une approbation manuelle dans l'interface de GitHub avant de continuer.
+- **Gestion des Erreurs Intelligente** :
+  - **Auto-Nettoyage** : Si un envoi est manuellement **rejeté**, la campagne brouillon est automatiquement supprimée de Mailchimp pour éviter le désordre.
+  - **Préservation des Brouillons** : Si un envoi **échoue** pour une raison technique (ex: erreur de configuration Mailchimp), le brouillon est conservé sur Mailchimp pour permettre un diagnostic.
+- **Configuration Flexible** : Les informations clés (clés API, ID, nom et e-mail de l'expéditeur) sont gérées de manière sécurisée via les Secrets de GitHub.
 
 ## 🚀 Le Flux d'Automatisation
 
@@ -21,84 +24,77 @@ Le processus suit un cycle de vie précis pour garantir sécurité et qualité :
        │
        └─> 2. [Vous] `git push` vers le dépôt GitHub
              │
-             └─> 3. [GitHub Action] Se déclenche
+             └─> 3. [GitHub Action] Détecte le nouveau fichier et se déclenche
                    │
-                   ├─> 4. [Script] Crée une campagne brouillon sur Mailchimp
+                   ├─> 4. [Script] Crée une campagne brouillon sur Mailchimp en utilisant votre template
                    │
                    └─> 5. [Script] Vous envoie un e-mail de test
                          │
-                         └─> 6. [GitHub Action] Se met en PAUSE, attendant votre décision
+                         └─> 6. [GitHub Action] Se met en PAUSE, attendant votre décision...
                                /               \
-[Vous] REJETEZ ❌ <---------- 7. Vous validez l'e-mail de test ----------> [Vous] APPROUVEZ ✅
-       │                                                                    │
-       └─> 8a. [Script] Supprime le brouillon sur Mailchimp                  └─> 8b. [Script] Envoie la campagne aux abonnés
-       │                                                                    │
-       └─> FIN DU PROCESSUS                                                 └─> FIN DU PROCESSUS
+[Vous] REJETEZ ❌ <---------- 7. Vous examinez le test ----------> [Vous] APPROUVEZ ✅
+       │                                                            │
+       ├─> 8a. Le job est "Annulé".                                 ├─> 8b. Le job d'envoi démarre.
+       │                                                            │
+       └─> 9a. Le script de nettoyage supprime le brouillon.         └─> 9b. La campagne est envoyée à toute votre audience.
+                                                                    │
+                                                                    └─> FIN DU PROCESSUS (Succès)
 ```
 
 ## 🛠️ Installation et Configuration
 
-Pour faire fonctionner ce système, une configuration initiale est nécessaire.
+Une configuration initiale est requise pour lier GitHub et Mailchimp.
 
 ### Prérequis
 * Un compte [GitHub](https://github.com/).
 * Un compte [Mailchimp](https://mailchimp.com/).
 * [Git](https://git-scm.com/) installé sur votre ordinateur.
-* Un éditeur de code (ex: VS Code).
 
 ### Étapes de Configuration
 
-#### 1. Côté Mailchimp
-- **Créez une Audience** : C'est votre liste de contacts. Récupérez son **ID d'Audience**.
-- **Créez une Clé API** : Dans les paramètres de votre compte, générez une clé API. Notez la **Clé API** et le **Préfixe Serveur** (ex: `us19`).
-- **Créez un Template d'e-mail** : Concevez le design de votre newsletter.
-    - **Important** : Dans une zone de texte, ajoutez l'attribut `mc:edit="main_content"` pour définir où le contenu sera injecté.
-    - Récupérez l'**ID numérique du Template**.
+#### 1. Configuration de Mailchimp
+- **Audience** : Préparez votre liste de contacts et notez son **ID d'Audience**.
+- **Clé API** : Générez une clé API et notez la **Clé API** elle-même ainsi que le **Préfixe Serveur** (ex: `us19`).
+- **Template d'e-mail** : Créez un template HTML.
+    - **Crucial** : Définissez une zone éditable avec l'attribut `mc:edit="main_content"`.
+    - **Crucial** : Assurez-vous que le pied de page (footer) contient les balises obligatoires `*|UNSUB|*` et `*|LIST:ADDRESS_LINE|*`.
+    - Notez l'**ID numérique du Template**.
+- **Domaine d'envoi** : Assurez-vous d'avoir un domaine d'expéditeur vérifié dans les paramètres de votre compte.
 
-#### 2. Côté GitHub
-1.  **Clonez ce dépôt** sur votre machine locale.
-2.  **Créez l'Environnement de Déploiement** :
-    - Allez dans `Settings > Environments > New environment`.
-    - Nommez-le `Production`.
-    - Ajoutez une règle de protection (`protection rule`) : `Required reviewers` et sélectionnez-vous.
-3.  **Configurez les Secrets** :
-    - Allez dans `Settings > Secrets and variables > Actions`.
-    - Créez les 5 secrets suivants avec les valeurs récupérées sur Mailchimp :
-      - `MAILCHIMP_API_KEY`
-      - `MAILCHIMP_AUDIENCE_ID`
-      - `MAILCHIMP_SERVER_PREFIX`
-      - `MAILCHIMP_TEMPLATE_ID`
-      - `MAILCHIMP_TEST_EMAIL` (votre propre e-mail pour les tests).
+#### 2. Configuration du Dépôt GitHub
+1.  **Clonez ce dépôt** sur votre machine.
+2.  **Créez l'Environnement** :
+    - Dans `Settings > Environments > New environment`, créez un environnement nommé `Production`.
+    - Activez la règle `Required reviewers` et ajoutez-vous comme réviseur.
+3.  **Configurez les 7 Secrets** :
+    - Dans `Settings > Secrets and variables > Actions`, créez les 7 secrets suivants avec les valeurs récupérées précédemment :
+      1.  `MAILCHIMP_API_KEY`
+      2.  `MAILCHIMP_AUDIENCE_ID`
+      3.  `MAILCHIMP_SERVER_PREFIX`
+      4.  `MAILCHIMP_TEMPLATE_ID`
+      5.  `MAILCHIMP_TEST_EMAIL` (votre e-mail pour recevoir les tests)
+      6.  `MAILCHIMP_FROM_NAME` (le nom de l'expéditeur, ex: "La Newsletter XYZ")
+      7.  `MAILCHIMP_REPLY_TO_EMAIL` (l'e-mail d'expédition, qui doit être vérifié sur Mailchimp)
 
-Le système est maintenant configuré et prêt à l'emploi.
+## ✍️ Utilisation Quotidienne
 
-## ✍️ Comment Utiliser ce Système au Quotidien
-
-1.  **Rédiger la Newsletter** :
-    - Créez un nouveau fichier dans le dossier `/newsletters`. Exemple : `001-ma-premiere-newsletter.md`.
-    - La première ligne doit être un titre de niveau 1 (`# Mon Sujet`) ; elle deviendra le sujet de votre e-mail.
-    - Rédigez votre contenu en utilisant la syntaxe Markdown.
-
-2.  **Envoyer et Déclencher l'Automatisation** :
-    - Ouvrez un terminal, placez-vous dans le dossier du projet et exécutez les commandes suivantes :
+1.  **Rédiger** : Créez un nouveau fichier `.md` dans le dossier `/newsletters`. La première ligne (`# Titre`) deviendra le sujet de l'e-mail.
+2.  **Déclencher** : Ouvrez votre terminal et envoyez vos modifications.
     ```bash
     git add .
-    git commit -m "Publication de la newsletter #1"
+    git commit -m "Publication de la newsletter sur les nouveautés d'août"
     git push
     ```
-
-3.  **Valider l'Envoi** :
-    - Consultez votre boîte mail pour l'e-mail de test.
+3.  **Valider** :
     - Allez dans l'onglet **Actions** de votre dépôt GitHub.
-    - Le workflow sera en attente de votre approbation.
-    - **Si tout est correct** : Cliquez sur `Review deployments` et `Approve and deploy`.
-    - **S'il y a une erreur** : Cliquez sur `Reject`. La campagne sera automatiquement supprimée de Mailchimp. Corrigez votre fichier `.md` et faites un nouveau `git push` pour relancer le cycle.
+    - Vous recevrez l'e-mail de test. Vérifiez-le attentivement.
+    - Le workflow sera en attente de votre décision.
+    - **Si tout est parfait** : Cliquez sur `Review deployments` et `Approve and deploy`. La campagne est envoyée.
+    - **S'il y a une erreur** : Cliquez sur `Reject`. Le workflow s'arrêtera et la campagne brouillon sera automatiquement supprimée de Mailchimp. Vous pouvez alors corriger votre fichier `.md` et relancer le processus avec un nouveau `push`.
 
-## 💻 Outils et Technologies
+## 💻 Technologies Utilisées
 
-* [GitHub Actions](https://github.com/features/actions) pour l'automatisation.
-* [Python 3](https://www.python.org/) pour le scripting.
-* [API Mailchimp v3](https://mailchimp.com/developer/marketing/api/) pour la gestion des campagnes.
-
----
-Ce projet est sous licence MIT.
+* **Automatisation** : [GitHub Actions](https://github.com/features/actions)
+* **Scripting** : [Python 3](https://www.python.org/)
+* **API** : [API Marketing de Mailchimp v3](https://mailchimp.com/developer/marketing/api/)
+* **Contenu** : [Markdown](https://www.markdownguide.org/)
