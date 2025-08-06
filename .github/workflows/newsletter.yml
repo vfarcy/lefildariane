@@ -1,42 +1,45 @@
-name: Envoyer la Newsletter avec Mailchimp (avec Test et Nettoyage)
+name: Envoyer la Newsletter et Déployer le Site
 
-# Se déclenche quand un fichier .md est modifié ou ajouté dans le dossier 'newsletters'
+# Se déclenche quand un fichier.md est modifié ou ajouté dans le dossier _posts
 on:
   push:
     branches:
       - main
     paths:
-      - 'newsletters/**.md'
+      - '_posts/**.md'
+  # Permet de lancer ce workflow manuellement depuis l'onglet Actions
+  workflow_dispatch:
+
+# Permissions nécessaires pour que l'action puisse publier sur GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
-  # TÂCHE 1 : CONSTRUIRE LA CAMPAGNE ET ENVOYER UN TEST
-  build_and_test:
+  # TÂCHE 1 : PRÉPARER ET ENVOYER LA NEWSLETTER PAR E-MAIL (MAILCHIMP)
+  send_email_newsletter:
+    name: 1. Envoyer l'e-mail (Mailchimp)
     runs-on: ubuntu-latest
-    # Les "outputs" permettent de passer des informations à la tâche suivante
     outputs:
       campaign_id: ${{ steps.create_campaign.outputs.campaign_id }}
       skipped: ${{ steps.create_campaign.outputs.skipped }}
     steps:
-      # Étape 1.1 : Récupère le code de votre dépôt
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
-          # On récupère tout l'historique pour pouvoir faire la comparaison entre les commits
           fetch-depth: 0
 
-      # Étape 1.2 : Configure l'environnement Python
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.x'
 
-      # Étape 1.3 : Installe les outils Python nécessaires
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install requests markdown beautifulsoup4
 
-      # Étape 1.4 : Crée la campagne, injecte le contenu (AVEC LOGS DE DÉBOGAGE)
       - name: Create Campaign and Add Content
         id: create_campaign
         env:
@@ -53,26 +56,25 @@ jobs:
           import os, sys, requests, json, markdown, subprocess
           from bs4 import BeautifulSoup
 
-          # --- VÉRIFICATION DU FICHIER ---
           newsletter_file = None
           try:
               before_sha = os.environ.get('BEFORE_SHA')
               after_sha = os.environ.get('AFTER_SHA')
-              git_command = f'git diff --name-only {before_sha} {after_sha} | grep \"newsletters/.*\\.md$\"'
+              # On cherche le fichier dans le dossier _posts
+              git_command = f'git diff --name-only {before_sha} {after_sha} | grep \"_posts/.*\\\\.md$\"'
               result = subprocess.run(git_command, shell=True, check=True, capture_output=True, text=True)
-              newsletter_file = result.stdout.strip().split('\n')[0]
+              newsletter_file = result.stdout.strip().split('\n')
           except (subprocess.CalledProcessError, IndexError):
               pass
           
           if not newsletter_file:
-              print('Aucun fichier .md trouvé dans les commits de ce push. Annulation du workflow.')
+              print('Aucun fichier.md trouvé dans les commits de ce push. Annulation du workflow.')
               print(f'::set-output name=skipped::true')
               sys.exit(0)
 
           print(f'Fichier de newsletter trouvé : {newsletter_file}')
           print(f'::set-output name=skipped::false')
 
-          # --- CONFIGURATION ---
           API_KEY = os.environ.get('MAILCHIMP_API_KEY')
           AUDIENCE_ID = os.environ.get('MAILCHIMP_AUDIENCE_ID')
           SERVER_PREFIX = os.environ.get('MAILCHIMP_SERVER_PREFIX')
@@ -83,20 +85,12 @@ jobs:
           from_name = os.environ.get('MAILCHIMP_FROM_NAME')
           reply_to_email = os.environ.get('MAILCHIMP_REPLY_TO_EMAIL')
 
-          # --- LECTURE ET CONVERSION ---
           with open(newsletter_file, 'r', encoding='utf-8') as f:
               html_content = markdown.markdown(f.read())
-          
-          # --- LOG DE DÉBOGAGE N°1 ---
-          print('--- DEBUT DU CONTENU HTML CONVERTI ---')
-          print(html_content)
-          print('--- FIN DU CONTENU HTML CONVERTI ---')
-
           soup = BeautifulSoup(html_content, 'html.parser')
           email_subject = soup.find('h1').text if soup.find('h1') else 'Ma Nouvelle Newsletter'
           print(f'Sujet de l\'email détecté : {email_subject}')
-          
-          # --- CRÉATION DE LA CAMPAGNE ---
+
           campaign_data = {'type': 'regular', 'recipients': {'list_id': AUDIENCE_ID}, 'settings': {'subject_line': email_subject, 'from_name': from_name, 'reply_to': reply_to_email, 'template_id': TEMPLATE_ID}}
           try:
               r = requests.post(f'{API_URL}/campaigns', headers=HEADERS, json=campaign_data)
@@ -107,14 +101,7 @@ jobs:
           except Exception as e:
               print(f'Erreur lors de la création de la campagne: {e}'); sys.exit(1)
           
-          # --- INJECTION DU CONTENU ---
           content_data = {'template': {'id': TEMPLATE_ID, 'sections': {MC_EDIT_REGION_NAME: html_content}}}
-          
-          # --- LOG DE DÉBOGAGE N°2 ---
-          print('--- DEBUT DES DONNÉES ENVOYÉES À MAILCHIMP ---')
-          print(json.dumps(content_data, indent=2))
-          print('--- FIN DES DONNÉES ENVOYÉES À MAILCHIMP ---')
-          
           try:
               requests.put(f'{API_URL}/campaigns/{campaign_id}/content', headers=HEADERS, json=content_data).raise_for_status()
               print('Contenu injecté dans le template avec succès.')
@@ -122,9 +109,8 @@ jobs:
               print(f'Erreur lors de l\'injection du contenu: {e}'); sys.exit(1)
           "
 
-      # Étape 1.5 : Envoyer l'e-mail de test
       - name: Send Test Email
-        if: steps.create_campaign.outputs.skipped != 'true'
+        if: steps.create_campaign.outputs.skipped!= 'true'
         env:
           MAILCHIMP_API_KEY: ${{ secrets.MAILCHIMP_API_KEY }}
           MAILCHIMP_SERVER_PREFIX: ${{ secrets.MAILCHIMP_SERVER_PREFIX }}
@@ -133,18 +119,14 @@ jobs:
         run: |
           python -c "
           import os, requests, json, sys
-
           API_KEY = os.environ.get('MAILCHIMP_API_KEY')
           SERVER_PREFIX = os.environ.get('MAILCHIMP_SERVER_PREFIX')
           CAMPAIGN_ID = os.environ.get('CAMPAIGN_ID')
           test_emails_str = os.environ.get('MAILCHIMP_TEST_EMAIL')
           test_emails_list = test_emails_str.split(',')
-          
           API_URL = f'https://{SERVER_PREFIX}.api.mailchimp.com/3.0/'
           HEADERS = {'Authorization': f'Bearer {API_KEY}'}
-          
           test_data = {'test_emails': test_emails_list, 'send_type': 'html'}
-          
           try:
               requests.post(f'{API_URL}/campaigns/{CAMPAIGN_ID}/actions/test', headers=HEADERS, json=test_data).raise_for_status()
               print(f'Email de test envoyé avec succès à : {test_emails_list}')
@@ -152,19 +134,19 @@ jobs:
               print(f'Erreur lors de l\'envoi du test : {e}'); sys.exit(1)
           "
 
-  # TÂCHE 2 : ENVOYER LA CAMPAGNE EN PRODUCTION (APRÈS APPROBATION)
+  # TÂCHE 2 : GÉRER L'APPROBATION ET L'ENVOI FINAL (MAILCHIMP)
   send_to_production:
-    needs: build_and_test
-    if: needs.build_and_test.outputs.skipped != 'true'
+    name: 2. Approbation et Envoi Final (Mailchimp)
+    needs: send_email_newsletter
+    if: needs.send_email_newsletter.outputs.skipped!= 'true'
     environment: Production
     runs-on: ubuntu-latest
     steps:
-      # Étape 2.1 : Envoi de la campagne finale
       - name: Send Final Campaign
         env:
           MAILCHIMP_API_KEY: ${{ secrets.MAILCHIMP_API_KEY }}
           MAILCHIMP_SERVER_PREFIX: ${{ secrets.MAILCHIMP_SERVER_PREFIX }}
-          CAMPAIGN_ID: ${{ needs.build_and_test.outputs.campaign_id }}
+          CAMPAIGN_ID: ${{ needs.send_email_newsletter.outputs.campaign_id }}
         run: |
           python -c "
           import os, requests, sys
@@ -175,19 +157,17 @@ jobs:
           HEADERS = {'Authorization': f'Bearer {API_KEY}'}
           try:
               requests.post(f'{API_URL}/campaigns/{CAMPAIGN_ID}/actions/send', headers=HEADERS).raise_for_status()
-              print('Approbation reçue ! La campagne est en cours d\'envoi final.')
+              print('Approbation reçue! La campagne est en cours d\'envoi final.')
           except Exception as e:
               print(f'Erreur lors de l\'envoi final : {e}'); sys.exit(1)
           "
 
-      # Étape 2.2 : Nettoyage en cas de rejet manuel
       - name: Cleanup Campaign on Rejection
-        # Se déclenche si vous cliquez sur "Reject" (le job est alors "annulé")
         if: cancelled()
         env:
           MAILCHIMP_API_KEY: ${{ secrets.MAILCHIMP_API_KEY }}
           MAILCHIMP_SERVER_PREFIX: ${{ secrets.MAILCHIMP_SERVER_PREFIX }}
-          CAMPAIGN_ID: ${{ needs.build_and_test.outputs.campaign_id }}
+          CAMPAIGN_ID: ${{ needs.send_email_newsletter.outputs.campaign_id }}
         run: |
           python -c "
           import os, requests
@@ -204,7 +184,35 @@ jobs:
               print(f'Erreur lors de la suppression de la campagne brouillon : {e}')
           "
 
+  # TÂCHE 3 : CONSTRUIRE LE SITE WEB STATIQUE
+  build_site:
+    name: 3. Construire le Site (GitHub Pages)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Setup GitHub Pages
+        uses: actions/configure-pages@v5
+      - name: Build with Jekyll
+        uses: actions/jekyll-build-pages@v1
+        with:
+          source:./
+          destination:./_site
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
 
-          
+  # TÂCHE 4 : DÉPLOYER LE SITE WEB STATIQUE
+  deploy_site:
+    name: 4. Déployer le Site (GitHub Pages)
+    runs-on: ubuntu-latest
+    needs: build_site
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
 
 
+        
