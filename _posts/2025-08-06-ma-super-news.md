@@ -3,7 +3,7 @@ layout: post
 title: "Test de Publication : Synchronisation E-mail et Site Web"
 ---
 
-# Test de Publication : Synchronisation E-mail et Site Web
+# Test de Publication : Synchronisation E-mail et Site Web - correction 1
 
 Bonjour,
 
