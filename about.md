@@ -16,7 +16,7 @@ C'est pour cette raison que je lance « Le fil d'Ariane » 🧵, un média pour 
 
 La ligne éditoriale ? Tisser des liens entre des disciplines passionnantes, avec un outil central pour nous guider :
 
-🔎 Zététique & Esprit Critique : L'art du doute comme compas. Avant toute chose, nous apprendrons à questionner les affirmations, à débusquer nos propres biais cognitifs et à construire un raisonnement solide. C'est notre méthode pour avancer.
+🔎 Zététique & Esprit Critique : L'art du doute pour déconstruire les discours. Nous analyserons le langage des affirmations pour débusquer les biais cognitifs, identifier les sophismes et construire un raisonnement solide.
 
 🧠 Épistémologie & Philosophie : Forts de cet outil, nous explorerons les fondements de la connaissance. Comment savons-nous ce que nous savons ? Quels modèles mentaux pour aujourd'hui ?
 
