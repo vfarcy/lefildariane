@@ -3,7 +3,7 @@ layout: post
 title: "Test de Publication : Synchronisation E-mail et Site Web"
 ---
 
-# Test de Publication : Synchronisation E-mail et Site Web - correction 2
+# Test de Publication : Synchronisation E-mail et Site Web
 
 Bonjour,
 
@@ -24,4 +24,21 @@ Le premier point est de s'assurer que les éléments de syntaxe Markdown sont co
 ## 2. L'Affichage sur les Deux Plateformes
 
 Le but est de confirmer que ce contenu est maintenant accessible de deux manières :
-1.  **Dans votre boîte mail :** Via le processus de validation
+1.  **Dans votre boîte mail :** Via le processus de validation Mailchimp que vous allez approuver.
+2.  **Sur le site statique :** Publié automatiquement sur l'archive en ligne via GitHub Pages.
+
+> "Ce qui n'est pas testé est cassé."
+> — Proverbe d'ingénieur.
+
+Ce test nous permet de nous assurer que notre système est robuste avant de publier du contenu plus élaboré. Il valide la bonne communication entre `git`, GitHub Actions, Mailchimp et Jekyll.
+
+## 3. Prochaines Étapes
+
+Une fois ce test validé, nous pourrons reprendre le cours normal de nos publications. Cet article pourra être supprimé du dépôt ou conservé comme documentation.
+
+Si tout s'est bien passé, vous devriez pouvoir approuver l'envoi de test sur GitHub et, quelques minutes plus tard, voir cet article apparaître sur la page d'accueil de votre site.
+
+Merci d'avoir suivi ce test !
+
+L'Automation
+
