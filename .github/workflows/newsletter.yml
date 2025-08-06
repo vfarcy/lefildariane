@@ -184,7 +184,7 @@ jobs:
               print(f'Erreur lors de la suppression de la campagne brouillon : {e}')
           "
 
-  # TÂCHE 3 : CONSTRUIRE LE SITE WEB STATIQUE
+ # TÂCHE 3 : CONSTRUIRE LE SITE WEB STATIQUE (CORRIGÉE)
   build_site:
     name: 3. Construire le Site (GitHub Pages)
     runs-on: ubuntu-latest
@@ -196,8 +196,9 @@ jobs:
       - name: Build with Jekyll
         uses: actions/jekyll-build-pages@v1
         with:
-          source:./
-          destination:./_site
+          # Chaque option doit être sur sa propre ligne
+          source: ./
+          destination: ./_site
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
 
