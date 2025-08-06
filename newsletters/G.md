@@ -33,4 +33,15 @@ Pourtant, de ces règles de probabilité ridiculement simples, appliquées sur d
 
 ## Faut-il un Pilote dans l'Avion ?
 
-La question que nous pose l'IA n'est donc peut-être pas "La machine pense-t-elle ?", mais plutôt "Avons-nous jamais bien compris ce que 'penser' signifie ?". Nous avons longtemps associé l'intelligence à la
+La question que nous pose l'IA n'est donc peut-être pas "La machine pense-t-elle ?", mais plutôt "Avons-nous jamais bien compris ce que 'penser' signifie ?". Nous avons longtemps associé l'intelligence à la conscience, à un "je" centralisé qui planifie et décide.
+
+La fourmilière, comme le LLM, nous montre un autre modèle : une intelligence distribuée, sans pilote, qui émerge de la communication et de l'interaction.
+
+Le fil d'Ariane, ici, ne nous mène pas vers un centre, mais nous invite à regarder la beauté et la complexité du tissage lui-même.
+
+---
+
+Cette idée d'intelligence sans conscience vous fascine ou vous inquiète ? Vos réflexions sont les bienvenues en réponse à cet e-mail.
+
+Passez une excellente journée,
+
