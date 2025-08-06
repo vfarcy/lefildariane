@@ -1,0 +1,30 @@
+---
+# On utilise le layout de base pour avoir l'en-tête et le pied de page
+layout: default
+---
+
+<div class="home">
+
+  <h1 class="page-heading">{{ site.title }}</h1>
+  <p class="site-description">{{ site.description }}</p>
+
+  <hr style="border: 1px solid #eee; margin: 40px 0;">
+
+  <h2 class="post-list-heading">Archives</h2>
+  <ul class="post-list">
+    {%- for post in site.posts -%}
+    <li>
+      <span class="post-meta">{{ post.date | date: "%-d %B %Y" }}</span>
+      <h3>
+        <a class="post-link" href="{{ post.url | relative_url }}">
+          {{ post.title | escape }}
+        </a>
+      </h3>
+      {%- if site.show_excerpts -%}
+        {{ post.excerpt }}
+      {%- endif -%}
+    </li>
+    {%- endfor -%}
+  </ul>
+
+</div>
