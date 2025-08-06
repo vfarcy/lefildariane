@@ -1,13 +1,12 @@
 name: Envoyer la Newsletter et Déployer le Site
 
-# Se déclenche quand un fichier.md est modifié ou ajouté dans le dossier _posts
 on:
   push:
     branches:
       - main
+    # Le chemin est maintenant _posts pour correspondre à Jekyll
     paths:
       - '_posts/**.md'
-  # Permet de lancer ce workflow manuellement depuis l'onglet Actions
   workflow_dispatch:
 
 # Permissions nécessaires pour que l'action puisse publier sur GitHub Pages
@@ -17,9 +16,9 @@ permissions:
   id-token: write
 
 jobs:
-  # TÂCHE 1 : PRÉPARER ET ENVOYER LA NEWSLETTER PAR E-MAIL (MAILCHIMP)
+  # TÂCHE 1 : PRÉPARER ET ENVOYER LA NEWSLETTER PAR E-MAIL
   send_email_newsletter:
-    name: 1. Envoyer l'e-mail (Mailchimp)
+    name: 1. Préparer et Tester l'E-mail (Mailchimp)
     runs-on: ubuntu-latest
     outputs:
       campaign_id: ${{ steps.create_campaign.outputs.campaign_id }}
@@ -60,15 +59,15 @@ jobs:
           try:
               before_sha = os.environ.get('BEFORE_SHA')
               after_sha = os.environ.get('AFTER_SHA')
-              # On cherche le fichier dans le dossier _posts
-              git_command = f'git diff --name-only {before_sha} {after_sha} | grep \"_posts/.*\\\\.md$\"'
+              git_command = f'git diff --name-only {before_sha} {after_sha} | grep \"_posts/.*\\.md$\"'
               result = subprocess.run(git_command, shell=True, check=True, capture_output=True, text=True)
-              newsletter_file = result.stdout.strip().split('\n')
+              # On prend le premier élément [0] de la liste pour avoir une chaîne de caractères
+              newsletter_file = result.stdout.strip().split('\n')[0]
           except (subprocess.CalledProcessError, IndexError):
               pass
           
           if not newsletter_file:
-              print('Aucun fichier.md trouvé dans les commits de ce push. Annulation du workflow.')
+              print('Aucun fichier .md trouvé dans le dossier /_posts pour ce commit. Annulation du workflow.')
               print(f'::set-output name=skipped::true')
               sys.exit(0)
 
@@ -86,7 +85,22 @@ jobs:
           reply_to_email = os.environ.get('MAILCHIMP_REPLY_TO_EMAIL')
 
           with open(newsletter_file, 'r', encoding='utf-8') as f:
-              html_content = markdown.markdown(f.read())
+              content_lines = f.readlines()
+              markdown_content = ''
+              # Logique pour ignorer l'en-tête 'front matter' de Jekyll
+              in_front_matter = False
+              if content_lines[0].strip() == '---':
+                  in_front_matter = True
+                  content_lines.pop(0) # on enlève la première ligne ---
+              
+              for line in content_lines:
+                  if in_front_matter and line.strip() == '---':
+                      in_front_matter = False
+                      continue
+                  if not in_front_matter:
+                      markdown_content += line
+              html_content = markdown.markdown(markdown_content)
+          
           soup = BeautifulSoup(html_content, 'html.parser')
           email_subject = soup.find('h1').text if soup.find('h1') else 'Ma Nouvelle Newsletter'
           print(f'Sujet de l\'email détecté : {email_subject}')
@@ -110,7 +124,7 @@ jobs:
           "
 
       - name: Send Test Email
-        if: steps.create_campaign.outputs.skipped!= 'true'
+        if: steps.create_campaign.outputs.skipped != 'true'
         env:
           MAILCHIMP_API_KEY: ${{ secrets.MAILCHIMP_API_KEY }}
           MAILCHIMP_SERVER_PREFIX: ${{ secrets.MAILCHIMP_SERVER_PREFIX }}
@@ -134,11 +148,11 @@ jobs:
               print(f'Erreur lors de l\'envoi du test : {e}'); sys.exit(1)
           "
 
-  # TÂCHE 2 : GÉRER L'APPROBATION ET L'ENVOI FINAL (MAILCHIMP)
+  # TÂCHE 2 : GÉRER L'APPROBATION ET L'ENVOI FINAL
   send_to_production:
     name: 2. Approbation et Envoi Final (Mailchimp)
     needs: send_email_newsletter
-    if: needs.send_email_newsletter.outputs.skipped!= 'true'
+    if: needs.send_email_newsletter.outputs.skipped != 'true'
     environment: Production
     runs-on: ubuntu-latest
     steps:
@@ -157,7 +171,7 @@ jobs:
           HEADERS = {'Authorization': f'Bearer {API_KEY}'}
           try:
               requests.post(f'{API_URL}/campaigns/{CAMPAIGN_ID}/actions/send', headers=HEADERS).raise_for_status()
-              print('Approbation reçue! La campagne est en cours d\'envoi final.')
+              print('Approbation reçue ! La campagne est en cours d\'envoi final.')
           except Exception as e:
               print(f'Erreur lors de l\'envoi final : {e}'); sys.exit(1)
           "
@@ -184,7 +198,7 @@ jobs:
               print(f'Erreur lors de la suppression de la campagne brouillon : {e}')
           "
 
- # TÂCHE 3 : CONSTRUIRE LE SITE WEB STATIQUE (CORRIGÉE)
+  # TÂCHE 3 : CONSTRUIRE LE SITE WEB STATIQUE
   build_site:
     name: 3. Construire le Site (GitHub Pages)
     runs-on: ubuntu-latest
@@ -196,7 +210,6 @@ jobs:
       - name: Build with Jekyll
         uses: actions/jekyll-build-pages@v1
         with:
-          # Chaque option doit être sur sa propre ligne
           source: ./
           destination: ./_site
       - name: Upload artifact
@@ -205,8 +218,8 @@ jobs:
   # TÂCHE 4 : DÉPLOYER LE SITE WEB STATIQUE
   deploy_site:
     name: 4. Déployer le Site (GitHub Pages)
-    runs-on: ubuntu-latest
     needs: build_site
+    runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -214,6 +227,4 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-
-
         
