@@ -56,7 +56,7 @@ Une configuration initiale est requise pour lier GitHub et Mailchimp.
 #### 1. Configuration de Mailchimp
 - **Audience** : Préparez votre liste de contacts et notez son **ID d'Audience**.
 - **Clé API** : Générez une clé API et notez la **Clé API** elle-même ainsi que le **Préfixe Serveur** (ex: `us19`).
-- **Template d'e-mail** : Créez un template HTML.
+- **Template d'e-mail** : Utiliser le modèle `emailtemplate.html` ou bien créez un template HTML.
     - **Crucial** : Définissez une zone éditable avec l'attribut `mc:edit="main_content"`.
     - **Crucial** : Assurez-vous que le pied de page (footer) contient les balises obligatoires `*|UNSUB|*` et `*|LIST:ADDRESS_LINE|*`.
     - Notez l'**ID numérique du Template**.
