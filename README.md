@@ -95,7 +95,7 @@ Une configuration initiale est requise pour lier GitHub et Mailchimp.
     git commit -m "Fix: Correction d'une typo sur la page A Propos [skip-email]"
     git push
     ```
-  Le workflow détectera ce mot-clé et sautera toutes les étapes liées à Mailchimp sans solliciter l'API Mailchimp.
+   Le workflow détectera ce mot-clé et sautera toutes les étapes liées à Mailchimp sans solliciter l'API Mailchimp.
     
 3.  **Valider** (si applicable):
     - Allez dans l'onglet **Actions** de votre dépôt GitHub.
