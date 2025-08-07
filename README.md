@@ -108,6 +108,7 @@ Une configuration initiale est requise pour lier GitHub et Mailchimp.
 ## 💻 Technologies Utilisées
 
 * **Automatisation** : [GitHub Actions](https://github.com/features/actions)
+* **Github pages** : [Github Pages](https://pages.github.com/)
 * **Scripting** : [Python 3](https://www.python.org/)
 * **API** : [API Marketing de Mailchimp v3](https://mailchimp.com/developer/marketing/api/)
 * **Contenu** : [Markdown](https://www.markdownguide.org/)
