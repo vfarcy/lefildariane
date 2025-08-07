@@ -15,6 +15,7 @@ Ce dépôt héberge un système d'automatisation complet pour la création et l'
   - **Auto-Nettoyage** : Si un envoi est manuellement **rejeté**, la campagne brouillon est automatiquement supprimée de Mailchimp pour éviter le désordre.
   - **Préservation des Brouillons** : Si un envoi **échoue** pour une raison technique (ex: erreur de configuration Mailchimp), le brouillon est conservé sur Mailchimp pour permettre un diagnostic.
 - **Configuration Flexible** : Les informations clés (clés API, ID, nom et e-mail de l'expéditeur) sont gérées de manière sécurisée via les Secrets de GitHub.
+- **Publication** : les articles sont publiés sur le site statique Github pages.
 
 ## 🚀 Le Flux d'Automatisation
 
