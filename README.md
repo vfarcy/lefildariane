@@ -27,19 +27,21 @@ Le processus suit un cycle de vie précis pour garantir sécurité et qualité :
              │
              └─> 3. [GitHub Action] Détecte le nouveau fichier et se déclenche
                    │
-                   ├─> 4. [Script] Crée une campagne brouillon sur Mailchimp en utilisant votre template
+                   ├─> 4. [Script] Crée une campagne brouillon sur Mailchimp
                    │
                    └─> 5. [Script] Vous envoie un e-mail de test
                          │
                          └─> 6. [GitHub Action] Se met en PAUSE, attendant votre décision...
                                /               \
-[Vous] REJETEZ ❌ <---------- 7. Vous examinez le test ----------> [Vous] APPROUVEZ ✅
+[Vous] REJETEZ ❌ <---------- 7. Vous validez le test ----------> [Vous] APPROUVEZ ✅
        │                                                            │
-       ├─> 8a. Le job est "Annulé".                                 ├─> 8b. Le job d'envoi démarre.
+       ├─> 8a. Le job est "Annulé".                                 ├─> 8b. La campagne e-mail est envoyée via Mailchimp.
        │                                                            │
-       └─> 9a. Le script de nettoyage supprime le brouillon.         └─> 9b. La campagne est envoyée à toute votre audience.
-                                                                    │
-                                                                    └─> FIN DU PROCESSUS (Succès)
+       └─> 9a. Le script de nettoyage supprime le brouillon.         └─> 9b. [GitHub Action] La construction du site démarre.
+             │                                                        │
+             └─> FIN (Annulé)                                         └─> 10. Le site statique est construit et déployé.
+                                                                          │
+                                                                          └─> FIN (Succès)
 ```
 
 ## 🛠️ Installation et Configuration
