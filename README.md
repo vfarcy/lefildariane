@@ -81,7 +81,7 @@ Une configuration initiale est requise pour lier GitHub et Mailchimp.
 
 ## ✍️ Utilisation Quotidienne
 
-1.  **Rédiger** : Créez un nouveau fichier `.md` dans le dossier `/newsletters`. La première ligne (`# Titre`) deviendra le sujet de l'e-mail.
+1.  **Rédiger** : Créez un nouveau fichier `.md` dans le dossier `/newsletters`. Attention au nom du fichier, obligatoirement de la forme `AAAA-MM-JJ-LeTitre`. La première ligne de ce fichier, (`# Titre`) deviendra le sujet de l'e-mail.
 2.  **Déclencher** : Ouvrez votre terminal et envoyez vos modifications.
     ```bash
     git add .
