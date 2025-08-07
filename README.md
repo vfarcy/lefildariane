@@ -88,7 +88,8 @@ Une configuration initiale est requise pour lier GitHub et Mailchimp.
     git commit -m "Publication de la newsletter sur les nouveautés d'août"
     git push
     ```
-#### Cas Spécifique : Mettre à jour le site SANS envoyer d'e-mail
+    **Cas Spécifique : Mettre à jour le site SANS envoyer d'e-mail**
+    
     Si vous ne modifiez que des aspects du site (CSS, page "À Propos", etc.) et que vous ne voulez **pas** lancer le processus d'envoi d'e-mail, ajoutez le mot-clé `[skip-email]` à la fin de votre message de commit.
     ```bash
     git commit -m "Fix: Correction d'une typo sur la page A Propos [skip-email]"
