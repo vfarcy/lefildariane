@@ -1,6 +1,0 @@
-# Introduction : Au-delà de la Citation, une Problématique Fondamentale
-Une pensée, attribuée à Albert Einstein, résonne avec une force particulière dans notre culture : « Le seul savoir véritable est l'expérience, le reste n'est que de l'information ». Cette maxime se décline en plusieurs variantes, telles que « La seule source de connaissance est l'expérience »  ou encore « L'apprentissage est une expérience. Tout le reste n'est que de l'information ». Bien que leur formulation exacte soit difficile à retracer dans les écrits primaires d'Einstein, leur popularité témoigne de leur capacité à capturer l'essence d'une philosophie profonde. Elles ne sont pas tant des citations littérales que des distillations culturelles d'une vision du monde complexe.   
-
-Cette apparente simplicité soulève cependant une problématique fondamentale, un paradoxe qui constitue le moteur de ce rapport. Comment concilier l'empirisme radical que cette citation semble prôner avec la nature profondément abstraite, mathématique et théorique des propres révolutions scientifiques d'Einstein? La théorie de la relativité, par exemple, n'est pas née d'une simple observation, mais d'une construction intellectuelle d'une audace inouïe.
-
-Almost done !
