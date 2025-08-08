@@ -16,15 +16,13 @@ C'est pour cette raison que je lance « Le fil d'Ariane » 🧵, un média pour 
 
 La ligne éditoriale ? Tisser des liens entre des disciplines diverses en suivant une direction vertueuse pour nous guider :
 
-🔎 Zététique & Esprit Critique : L'art du doute pour déconstruire les discours. Nous analyserons le langage des affirmations pour débusquer les biais cognitifs, identifier les sophismes et construire un raisonnement solide.
+🔎 zététique & esprit critique : l'art du doute pour déconstruire les discours. Nous analyserons le langage des affirmations pour débusquer les biais cognitifs, identifier les sophismes et construire un raisonnement solide.
 
-🧠 Épistémologie & Philosophie : Nous explorerons les fondements de la connaissance. Comment savons-nous ce que nous savons ? Quels modèles mentaux pour aujourd'hui ?
+🧠 épistémologie & philosophie : nous explorerons les fondements de la connaissance. Comment savons-nous ce que nous savons ? Quels modèles mentaux pour aujourd'hui ?
 
-🤖 Intelligence Artificielle : Au-delà de la hype. Nous appliquerons notre scepticisme méthodique pour comprendre comment les modèles "pensent" vraiment, quelles sont leurs limites, et ce qu'ils nous révèlent sur notre propre esprit.
+🤖 intelligence artificielle : au-delà de la hype. Nous appliquerons notre scepticisme méthodique pour comprendre comment les modèles "pensent" vraiment, quelles sont leurs limites, et ce qu'ils nous révèlent sur notre propre esprit.
 
-🌐 Systémique & Cybernétique : Tout est interconnecté. Nous utiliserons la pensée systémique pour comprendre les relations cachées, les boucles de rétroaction et les structures invisibles qui régissent nos mondes, du code à la société.
-
-
+🌐 systémique & cybernétique : tout est interconnecté. Nous utiliserons la pensée systémique pour comprendre les relations cachées, les boucles de rétroaction et les structures invisibles qui régissent nos mondes, du code à la société.
 
 
 
