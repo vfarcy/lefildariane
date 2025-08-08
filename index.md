@@ -60,15 +60,12 @@ $.extend($.validator.messages, {
 <ul class="post-list">
   {%- for post in site.posts -%}
   <li>
-    <h3>
-      <a class="post-link" href="{{ post.url | relative_url }}">
-        {{ post.title | escape }}
-      </a>
-    </h3>
     <span class="post-meta">{{ post.date | date: "%-d %B %Y" }}</span>
-    {%- if post.excerpt -%}
-      <p>{{ post.excerpt }}</p>
-    {%- endif -%}
+    <span style="margin: 0 10px;">&raquo;</span>
+    <a class="post-link" href="{{ post.url | relative_url }}">
+      {{ post.title | escape }}
+    </a>
   </li>
   {%- endfor -%}
 </ul>
+
