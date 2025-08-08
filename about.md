@@ -14,7 +14,7 @@ C'est pour cette raison que je lance « Le fil d'Ariane » 🧵, un média pour 
 
 « Le fil d'Ariane » s'adresse aux esprits curieux, aux sceptiques méthodiques, aux développeurs philosophes, et à celles et ceux qui pensent que la bonne question est toujours plus importante que la réponse immédiate.
 
-La ligne éditoriale ? Tisser des liens entre des disciplines divers, en suivant une direction vertueuse pour nous guider :
+La ligne éditoriale ? Tisser des liens entre des disciplines diverses en suivant une direction vertueuse pour nous guider :
 
 🔎 Zététique & Esprit Critique : L'art du doute pour déconstruire les discours. Nous analyserons le langage des affirmations pour débusquer les biais cognitifs, identifier les sophismes et construire un raisonnement solide.
 
