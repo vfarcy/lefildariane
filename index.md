@@ -54,3 +54,21 @@ $.extend($.validator.messages, {
         max: $.validator.format("Veuillez entrer une valeur inférieure ou égale à {0}."),
         min: $.validator.format("Veuillez entrer une valeur supérieure ou égale à {0}.")
 });}(jQuery));var $mcj = jQuery.noConflict(true);</script></div>
+
+## Archives 
+
+<ul class="post-list">
+  {%- for post in site.posts -%}
+  <li>
+    <h3>
+      <a class="post-link" href="{{ post.url | relative_url }}">
+        {{ post.title | escape }}
+      </a>
+    </h3>
+    <span class="post-meta">{{ post.date | date: "%-d %B %Y" }}</span>
+    {%- if post.excerpt -%}
+      <p>{{ post.excerpt }}</p>
+    {%- endif -%}
+  </li>
+  {%- endfor -%}
+</ul>
