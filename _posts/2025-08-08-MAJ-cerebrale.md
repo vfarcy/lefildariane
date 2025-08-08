@@ -3,7 +3,7 @@ layout: post
 title: "J'ai installé la dernière mise à jour de mon cerveau. Voici les notes de patch."
 ---
 
-# J'ai installé la dernière mise à jour de mon cerveau. Voici les notes de patch.
+# Voici les notes du patch appliqué.
 
 La nuit dernière, j'ai dû accepter les nouvelles conditions d'utilisation de ma conscience en rêve. Au réveil, j'avais une notification push derrière les yeux. Apparemment, la version "Sommeil Paradoxal 3.1" a été déployée.
 
