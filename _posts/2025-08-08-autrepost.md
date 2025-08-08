@@ -1,9 +1,9 @@
 ---
 layout: post
-title: "xxxxxxxxxxxxxxxxxxxxxxxxxx"
+title: "Message de service ..."
 ---
 
-# xxxxxxxxxxxxxxx
+# Message de service ...
 
 Bonjour,
 
@@ -13,7 +13,7 @@ L'objectif est de vérifier plusieurs points.
 
 ---
 
-## 1. yyyyyyyyyyyyyyyyyyyyyyy
+## 1. Markdown vers HTML
 
 Le premier point est de s'assurer que les éléments de syntaxe Markdown sont correctement interprétés et transformés en HTML.
 
