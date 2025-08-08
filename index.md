@@ -11,7 +11,7 @@ layout: home
 </style>
 <div id="mc_embed_signup">
     <form action="https://github.us2.list-manage.com/subscribe/post?u=1376fcddb91077173ec016787&amp;id=f4fea393e6&amp;f_id=00821be0f0" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank">
-        <div id="mc_embed_signup_scroll"><h2>Abonner</h2>
+        <div id="mc_embed_signup_scroll"><h2> Pour recevoir les articles par courriel : </h2>
             <div class="indicates-required"><span class="asterisk">*</span> indique "obligatoire"</div>
             <div class="mc-field-group"><label for="mce-EMAIL">Email <span class="asterisk">*</span></label><input type="email" name="EMAIL" class="required email" id="mce-EMAIL" required="" value=""></div><div class="mc-field-group"><label for="mce-FNAME">Prénom </label><input type="text" name="FNAME" class=" text" id="mce-FNAME" value=""></div>
         <div id="mce-responses" class="clear foot">
