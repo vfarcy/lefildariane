@@ -24,4 +24,4 @@ Le cache du sol s'asséchait trop vite à cause d'une surcharge de requêtes sol
 Je l'ai mis dans un coin avec une lumière indirecte. J'ai aussi fait un `reboot` en le rempotant. Les performances sont revenues à la normale.
 
 Mon erreur a été de traiter la plante comme un système isolé, alors que Robert était un élément au sein d'un système plus large incluant une étoile située à 150 millions de kilomètres. Un oubli de débutant.
-```
+
