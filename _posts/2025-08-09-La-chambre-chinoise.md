@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "La Chambre Chinoise et l'Illusion de la Compréhension en IA"
+title: "La chambre Chinoise et l'illusion de la compréhension en IA"
 ---
 
 # La Chambre Chinoise et l'Illusion de la Compréhension en IA
