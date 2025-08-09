@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Mon collègue est-il un zombie philosophique ? 
+title: "Mon collègue est-il un zombie philosophique ? "
 ---
 
 # Mon collègue est-il un zombie philosophique ? 
@@ -13,7 +13,7 @@ Or, depuis six mois que nous sommes en télétravail, les preuves s'accumulent c
 
 ## L'Analyse des Données (de la Réunion Zoom)
 
-J'ai appliqué une checklist à nos interactions quotidiennes :
+J'ai appliqué une checklist de zététique de base à nos interactions quotidiennes :
 
 * **Réponses parfaites :** Bernard répond toujours de manière polie, pertinente et avec un temps de latence de 0.2 secondes. Personne n'est aussi constant. Il n'a jamais dit "euh...", "attends, je réfléchis" ou "désolé, mon chat vient de sauter sur le clavier". C'est suspect.
 * **Fond d'écran immuable :** Son arrière-plan est un bureau rangé et minimaliste. Toujours le même. Pas une tasse qui traîne, pas un rayon de soleil qui change. C'est soit un `background.jpg`, soit le décor d'une conscience simulée.
@@ -25,4 +25,4 @@ Hier, le test ultime. J'ai fait une blague en pleine réunion. Tout le monde a r
 
 La conclusion la plus simple, selon le rasoir d'Ockham, n'est pas qu'il est incroyablement professionnel. C'est que son script de conversation est juste très bien codé.
 
-Je crois que je vais lui envoyer un CAPTCHA avant la prochaine réunion, juste pour être sûr.
+Je crois que je vais lui envoyer un CAPTCHA avant la prochaine réunion. Juste pour être sûr.
