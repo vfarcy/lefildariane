@@ -81,6 +81,11 @@ jobs:
           from_name = os.environ.get('MAILCHIMP_FROM_NAME')
           reply_to_email = os.environ.get('MAILCHIMP_REPLY_TO_EMAIL')
 
+          # --- DÉBUT DES LIGNES DE DÉBOGAGE ---
+          print('--- DEBUG: Contenu brut du secret MAILERCHIMP_FROM_NAME ---')
+          print(repr(from_name))
+          # --- FIN DES LIGNES DE DÉBOGAGE --
+          
           with open(newsletter_file, 'r', encoding='utf-8') as f:
               content_lines = f.readlines()
               markdown_content = ''
