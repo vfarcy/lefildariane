@@ -24,3 +24,4 @@ Le cache du sol s'asséchait trop vite à cause d'une surcharge de requêtes sol
 Je l'ai mis dans un coin avec une lumière indirecte. J'ai aussi fait un `reboot` en le rempotant. Les performances sont revenues à la normale.
 
 La zététique nous apprend à questionner nos hypothèses. Mon erreur a été de traiter la plante comme un système isolé, alors qu'elle faisait partie d'un système plus large incluant une étoile située à 150 millions de kilomètres. Un oubli de débutant.
+
