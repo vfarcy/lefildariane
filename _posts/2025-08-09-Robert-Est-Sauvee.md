@@ -5,7 +5,7 @@ title: "J'ai débogué ma plante verte (c'était un problème de cache)"
 
 # J'ai débogué ma plante verte (c'était un problème de cache)
 
-Ma plante verte (un Ficus Benjamina v1.3, nom de code "Robert") ne répondait plus correctement. Les feuilles jaunissaient. Le déploiement de nouvelles branches était en échec. Clairement, il y avait un bug dans la production.
+Ma plante verte (un Ficus Benjamina v1.4, nom de code "Robert") ne répondait plus correctement. Les feuilles jaunissaient. Le déploiement de nouvelles branches était en échec. Clairement, il y avait un bug dans la production.
 
 Mon premier réflexe a été de consulter la documentation en ligne (un forum de jardinage). La réponse classique : "Avez-vous essayé de l'arroser et de ne pas l'arroser en même temps ?" Une approche quantique du problème, peu utile.
 
