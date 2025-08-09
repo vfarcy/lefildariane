@@ -5,7 +5,7 @@ title: "La chambre Chinoise et l'illusion de la compréhension en IA"
 
 # La Chambre Chinoise et l'Illusion de la Compréhension en IA
 
-Les intelligences artificielles génératives peuvent fasciner. Elles peuvent écrire de la poésie, débugger du code, ou résumer des théories complexes. Face à une telle maîtrise du langage, la question se pose inévitablement : comprennent-elles vraiment ce qu'elles écrivent ?
+Les intelligences artificielles génératives peuvent fasciner. Elles peuvent écrire de la poésie, débugger du code, ou résumer des théories complexes. Face à une telle maîtrise du langage, la question se pose : comprennent-elles vraiment ce qu'elles écrivent ?
 
 Le philosophe John Searle a proposé en 1980 une expérience de pensée : l'argument de la Chambre Chinoise.
 
