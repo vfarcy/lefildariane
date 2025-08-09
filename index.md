@@ -2,7 +2,9 @@
 layout: home
 ---
 
-<img src="https://i.imgur.com/KjEtVZy.png" alt="Logo Le fil d'Ariane" style="width:50%;">
+<div style="text-align: center;">
+  <img src="https://i.imgur.com/KjEtVZy.png" alt="Logo Le fil d'Ariane" style="width:50%;">
+</div>
 
 <div id="mc_embed_shell">
       <link href="//cdn-images.mailchimp.com/embedcode/classic-061523.css" rel="stylesheet" type="text/css">
