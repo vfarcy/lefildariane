@@ -5,7 +5,7 @@ title: "Comment je n'ai (presque) pas écrit cet article grâce à Zénon d'Él�
 
 # Comment je n'ai (presque) pas écrit cet article grâce à Zénon d'Élée
 
-Hier, je me suis assis pour écrire cet article. Une tâche en apparence simple. Mais mon cerveau, récemment mis à jour avec le patch "Grèce Antique", a décidé de m'opposer le paradoxe de Zénon.
+Avant hier, je me suis assis pour écrire cet article. Une tâche en apparence simple. Mais mon cerveau, récemment mis à jour avec le patch "Grèce Antique", a décidé de m'opposer le paradoxe de Zénon.
 
 Pour écrire cet article, il me fallait d'abord en écrire la première moitié. Logique. Mais pour écrire cette moitié, je devais d'abord en écrire le premier quart. Et avant cela, le premier huitième, puis le premier seizième, et ainsi de suite à l'infini.
 
