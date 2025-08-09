@@ -2,6 +2,8 @@
 layout: home
 ---
 
+![Logo Le fil d'Ariane](https://i.imgur.com/KjEtVZy.png))
+
 <div id="mc_embed_shell">
       <link href="//cdn-images.mailchimp.com/embedcode/classic-061523.css" rel="stylesheet" type="text/css">
   <style type="text/css">
