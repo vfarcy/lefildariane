@@ -1,8 +1,3 @@
------
-
-### Fichier : `2025-08-09-j-ai-debogue-ma-plante-verte.md`
-
-```markdown
 ---
 layout: post
 title: "J'ai débogué ma plante verte :  c'était un problème de cache"
