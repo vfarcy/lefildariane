@@ -8,7 +8,7 @@ title: "Les deux sentiers de la paresse intellectuelle"
 > "Douter de tout ou tout croire sont deux solutions également commodes qui, l’une comme l’autre, nous dispensent de réfléchir."
 > — Henri Poincaré
 
-Cette phrase attribiuée au mathématicien et philosophe Henri Poincaré sonne comme un scalpel. En quelques mots, elle dissèque les deux pièges les plus courants dans lesquels tombe notre esprit lorsqu'il est confronté à la complexité : la crédulité totale et le cynisme absolu.
+Cette phrase attribuée au mathématicien et philosophe des sciences Henri Poincaré sonne comme un scalpel. En quelques mots, elle dissèque les deux pièges les plus courants dans lesquels tombe notre esprit lorsqu'il est confronté à la complexité : la crédulité totale et le cynisme absolu.
 
 Ce sont deux sentiers qui semblent opposés, mais qui mènent en réalité au même endroit : une zone confortable où l'on n'a plus besoin de faire l'effort de penser.
 
