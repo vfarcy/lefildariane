@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Les deux dentiers de la paresse intellectuelle"
+title: "Les deux sentiers de la paresse intellectuelle"
 ---
 
 # Les deux sentiers de la paresse intellectuelle
