@@ -48,4 +48,4 @@ C'est un chemin inconfortable, car il ne mène pas à des certitudes faciles. Il
 
 ---
 
-Cette citation de Poincaré est un rappel puissant que la véritable pensée critique n'est pas une destination, mais un processus. Un effort constant pour ne choisir ni la foi aveugle, ni le rejet systématique.
+Cette citation de Poincaré rappelle que la véritable pensée critique n'est pas une destination, mais un processus. Un effort constant pour ne choisir ni la foi aveugle, ni le rejet systématique.
