@@ -5,7 +5,7 @@ title: "Ma boîte de réception contient un e-mail de Schrödinger"
 
 # Ma boîte de réception contient un e-mail de Schrödinger
 
-Il est là, depuis ce matin. Un e-mail de mon client le plus important. L'objet est d'une simplicité étonnante : "Suite à notre conversation".
+Il est là, depuis ce matin. Un e-mail de mon client le plus important. L'objet est d'une simplicité déconcertante : "Suite à notre conversation".
 
 Cet e-mail n'est plus un simple message. C'est une "boîte noire" quantique. Tant que je ne l'ouvre pas, il est dans une superposition de deux états radicalement opposés :
 
