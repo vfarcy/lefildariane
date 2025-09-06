@@ -27,6 +27,6 @@ C'est une application du **biais de corrélation**. Mon habitude de brossage est
 
 ## La prochaine étape ?
 
-J'attends avec une angoisse non dissimulée la prochaine mise à jour. Mon pèse-personne va-t-il me reprocher le "poids de mes regrets" ? Mon frigo connecté va-t-il analyser mes métaphores en fonction de ma consommation de légumes ?
+J'attends avec une certaine angoisse la prochaine mise à jour. Mon pèse-personne va-t-il me reprocher le "poids de mes regrets" ? Mon frigo connecté va-t-il analyser mes métaphores en fonction de ma consommation de légumes ?
 
 Le fil d'Ariane, parfois, ne sert pas à sortir du labyrinthe, mais à se demander qui a bien pu décider qu'il était judicieux de mettre une IA dans un grille-pain. Et pourquoi on a fini par l'acheter.
