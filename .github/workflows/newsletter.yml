@@ -260,7 +260,7 @@ jobs:
     # Ne démarre qu'après le succès du déploiement sur GitHub Pages
     needs: deploy_site
     runs-on: ubuntu-latest
-    steps:
+   steps:
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
@@ -273,13 +273,13 @@ jobs:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           REMOTE_HOST: ${{ secrets.SSH_HOST }}
           REMOTE_USER: ${{ secrets.SSH_USER }}
-          
-          # --- CORRECTIONS CI-DESSOUS ---
-          # On enlève le "/" final de la source
-          SOURCE: "_site" 
-          # On s'assure que le chemin distant est propre
+          SOURCE: "_site/"
           TARGET: ${{ secrets.REMOTE_PATH }}
-          
           EXCLUDE: "/.git/, /.github/"
-          # On ajoute une option pour un log plus détaillé
+          
+          # --- AJOUTS CI-DESSOUS ---
+          # On ajoute des options SSH pour forcer une connexion non-interactive
+          # et améliorer la compatibilité.
           ARGS: "-rltgoDzv --verbose"
+          SSH_CMD_ARGS: "-oHostKeyAlgorithms=+ssh-rsa -oPubkeyAcceptedAlgorithms=+ssh-rsa"
+          
