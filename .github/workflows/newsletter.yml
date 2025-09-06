@@ -275,4 +275,8 @@ jobs:
           REMOTE_USER: ${{ secrets.SSH_USER }}
           SOURCE: "./" # Le contenu est à la racine de l'artefact téléchargé
           TARGET: ${{ secrets.REMOTE_PATH }}
+                    # --- LA CORRECTION EST ICI ---
+          # On désactive la vérification stricte de la clé de l'hôte
+          # pour éviter que la connexion ne se bloque en attendant une validation.
+          SSH_STRICT_HOST_KEY_CHECKING: 'no'
           EXCLUDE: "/.git/, /.github/"
