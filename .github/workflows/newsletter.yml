@@ -1,4 +1,4 @@
-name: Envoyer la Newsletter et Déployer les Sites
+name: Envoyer la Newsletter et Déployer le Site
 
 on:
   push:
@@ -17,20 +17,18 @@ jobs:
   # TÂCHE 1 : PRÉPARER L'E-MAIL ET LANCER LE TEST
   prepare_and_test_email:
     name: 1. Préparer et Tester l'E-mail (Mailchimp)
-    # La condition pour sauter l'envoi d'e-mail
-    if: "!contains(github.event.head_commit.message, '[skip-email]')"
     runs-on: ubuntu-latest
     outputs:
       campaign_id: ${{ steps.create_campaign.outputs.campaign_id }}
       skipped: ${{ steps.create_campaign.outputs.skipped }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v4
         with:
           python-version: '3.x'
 
@@ -59,23 +57,18 @@ jobs:
           try:
               before_sha = os.environ.get('BEFORE_SHA')
               after_sha = os.environ.get('AFTER_SHA')
-              null_sha = '0000000000000000000000000000000000000000'
-              git_command = ''
-              if before_sha == null_sha:
-                  git_command = f'git ls-tree --name-only -r {after_sha} | grep \"_posts/.*\\\\.md$\"'
-              else:
-                  git_command = f'git diff --name-only {before_sha} {after_sha} | grep \"_posts/.*\\\\.md$\"'
+              git_command = f'git diff --name-only {before_sha} {after_sha} | grep \"_posts/.*\\.md$\"'
               result = subprocess.run(git_command, shell=True, check=True, capture_output=True, text=True)
               newsletter_file = result.stdout.strip().split('\n')[0]
           except (subprocess.CalledProcessError, IndexError):
               pass
           
           if not newsletter_file:
-              print('Aucun fichier .md trouvé... Annulation.')
+              print('Aucun fichier .md trouvé dans le dossier /_posts pour ce commit. Annulation du workflow.')
               print(f'::set-output name=skipped::true')
               sys.exit(0)
 
-          print(f'Fichier trouvé : {newsletter_file}')
+          print(f'Fichier de newsletter trouvé : {newsletter_file}')
           print(f'::set-output name=skipped::false')
 
           API_KEY = os.environ.get('MAILCHIMP_API_KEY')
@@ -88,10 +81,10 @@ jobs:
           from_name = os.environ.get('MAILCHIMP_FROM_NAME')
           reply_to_email = os.environ.get('MAILCHIMP_REPLY_TO_EMAIL')
 
-          # --- DÉBUT DES LIGNES DE DÉBOGAGE (CONSERVÉES) ---
+          # --- DÉBUT DES LIGNES DE DÉBOGAGE ---
           print('--- DEBUG: Contenu brut du secret MAILERCHIMP_FROM_NAME ---')
           print(repr(from_name))
-          # --- FIN DES LIGNES DE DÉBOGAGE ---
+          # --- FIN DES LIGNES DE DÉBOGAGE --
           
           with open(newsletter_file, 'r', encoding='utf-8') as f:
               content_lines = f.readlines()
@@ -110,6 +103,8 @@ jobs:
 
           soup = BeautifulSoup(html_content, 'html.parser')
           email_subject = soup.find('h1').text if soup.find('h1') else 'Ma Nouvelle Newsletter'
+          print(f'Sujet de l\'email détecté : {email_subject}')
+
           campaign_data = {'type': 'regular', 'recipients': {'list_id': AUDIENCE_ID}, 'settings': {'subject_line': email_subject, 'from_name': from_name, 'reply_to': reply_to_email, 'template_id': TEMPLATE_ID}}
           try:
               r = requests.post(f'{API_URL}/campaigns', headers=HEADERS, json=campaign_data)
@@ -123,7 +118,7 @@ jobs:
           content_data = {'template': {'id': TEMPLATE_ID, 'sections': {MC_EDIT_REGION_NAME: html_content}}}
           try:
               requests.put(f'{API_URL}/campaigns/{campaign_id}/content', headers=HEADERS, json=content_data).raise_for_status()
-              print('Contenu injecté avec succès.')
+              print('Contenu injecté dans le template avec succès.')
           except Exception as e:
               print(f'Erreur lors de l\'injection du contenu: {e}'); sys.exit(1)
           "
@@ -144,10 +139,13 @@ jobs:
           CAMPAIGN_ID = os.environ.get('CAMPAIGN_ID')
           test_emails_str = os.environ.get('MAILCHIMP_TEST_EMAIL')
 
-          # --- DÉBUT DES LOGS DE DÉBOGAGE (CONSERVÉS) ---
+          # --- DÉBUT DES LOGS DE DÉBOGAGE ---
           print('--- DEBUG: Contenu brut du secret MAILERCHIMP_TEST_EMAIL ---')
-          print(repr(test_emails_str))
+          print(repr(test_emails_str)) # repr() va montrer les caractères cachés comme '\n'
+          
+          # On nettoie la chaîne d'e-mails pour être plus robuste
           test_emails_list = [email.strip() for email in test_emails_str.split(',') if email.strip()]
+          
           print('--- DEBUG: Liste des e-mails après nettoyage et split ---')
           print(test_emails_list)
           # --- FIN DES LOGS DE DÉBOGAGE ---
@@ -155,8 +153,12 @@ jobs:
           API_URL = f'https://{SERVER_PREFIX}.api.mailchimp.com/3.0/'
           HEADERS = {'Authorization': f'Bearer {API_KEY}', 'Content-Type': 'application/json'}
           
-          test_data = {'test_emails': test_emails_list, 'send_type': 'html'}
+          test_data = {
+              'test_emails': test_emails_list,
+              'send_type': 'html'
+          }
 
+          # --- LOG FINAL AVANT ENVOI ---
           print('--- DEBUG: Données JSON envoyées à Mailchimp ---')
           print(json.dumps(test_data, indent=2))
           
@@ -164,6 +166,7 @@ jobs:
               requests.post(f'{API_URL}/campaigns/{CAMPAIGN_ID}/actions/test', headers=HEADERS, json=test_data).raise_for_status()
               print(f'Email de test envoyé avec succès à : {test_emails_list}')
           except Exception as e:
+              # Affiche la réponse complète de l'API en cas d'erreur
               if hasattr(e, 'response') and e.response is not None:
                   print('--- ERREUR DÉTAILLÉE DE L\'API MAILCHIMP ---')
                   print(e.response.text)
@@ -212,39 +215,35 @@ jobs:
           CAMPAIGN_ID = os.environ.get('CAMPAIGN_ID')
           API_URL = f'https://{SERVER_PREFIX}.api.mailchimp.com/3.0/'
           HEADERS = {'Authorization': f'Bearer {API_KEY}'}
-          print(f'Déploiement rejeté. Suppression du brouillon ID : {CAMPAIGN_ID}')
+          print(f'Le déploiement a été rejeté. Suppression de la campagne brouillon ID : {CAMPAIGN_ID}')
           try:
               requests.delete(f'{API_URL}/campaigns/{CAMPAIGN_ID}', headers=HEADERS).raise_for_status()
-              print('Campagne brouillon supprimée avec succès.')
+              print('Campagne brouillon supprimée avec succès de Mailchimp.')
           except Exception as e:
-              print(f'Erreur lors de la suppression : {e}')
+              print(f'Erreur lors de la suppression de la campagne brouillon : {e}')
           "
 
-  # TÂCHE 3 : CONSTRUCTION DU SITE
+  # TÂCHE 3 : CONSTRUIRE LE SITE WEB STATIQUE
   build_site:
-    name: 3. Construire le Site
+    name: 3. Construire le Site (GitHub Pages)
     needs: send_final_email
-    if: always()
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
-
+        uses: actions/checkout@v3
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v5
-      
       - name: Build with Jekyll
         uses: actions/jekyll-build-pages@v1
         with:
           source: ./
           destination: ./_site
-
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
 
-  # TÂCHE 4 : DÉPLOIEMENT SUR GITHUB PAGES
-  deploy_to_github_pages:
-    name: 4. Déployer sur GitHub Pages
+  # TÂCHE 4 : DÉPLOYER LE SITE WEB STATIQUE
+  deploy_site:
+    name: 4. Déployer le Site (GitHub Pages)
     needs: build_site
     runs-on: ubuntu-latest
     environment:
@@ -254,41 +253,4 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-
-  # TÂCHE 5 : DÉPLOIEMENT SUR OVH
-  deploy_to_ovh:
-    name: 5. Déployer sur OVH (via SSH)
-    needs: deploy_to_github_pages # S'exécute après le déploiement sur GitHub Pages
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download artifact
-        # L'action upload-pages-artifact crée un artefact nommé "github-pages"
-        # On télécharge cet artefact spécifique.
-        uses: actions/download-artifact@v4
-        with:
-          name: github-pages
-
-      # --- DÉBUT DES ÉTAPES DE DÉBOGAGE ---
-      - name: "DEBUG : Vérifier les variables d'environnement"
-        run: |
-          echo "Utilisateur SSH (SSH_USER): ${{ secrets.SSH_USER }}"
-          echo "Hôte SSH (SSH_HOST): ${{ secrets.SSH_HOST }}"
-          echo "Dossier de destination (REMOTE_PATH): ${{ secrets.REMOTE_PATH }}"
-
-      - name: "DEBUG : Lister les fichiers à déployer"
-        run: |
-          echo "Contenu du dossier '_site' qui sera envoyé :"
-          ls -laR ./_site
-      # --- FIN DES ÉTAPES DE DÉBOGAGE ---
-
-      
-
-      - name: Deploy to Server via Rsync
-        uses: easingthemes/ssh-deploy@v5.0.0
-        with:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          REMOTE_HOST: ${{ secrets.SSH_HOST }}
-          REMOTE_USER: ${{ secrets.SSH_USER }}
-          SOURCE: "./" # Le contenu de l'artefact est téléchargé à la racine
-          TARGET: ${{ secrets.REMOTE_PATH }}
-          EXCLUDE: "/.git/, /.github/"
+        
