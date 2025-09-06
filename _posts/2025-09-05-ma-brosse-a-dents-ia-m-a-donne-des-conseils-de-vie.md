@@ -9,7 +9,7 @@ J'ai récemment fait l'acquisition d'une brosse à dents "intelligente". Elle pr
 
 J'ai reçu hier mon premier rapport hebdomadaire. Ce n'était pas un rapport dentaire. C'était une intervention.
 
-**Objet : Votre Bilan de Brossage et de Stabilité Existentielle - Semaine 36**
+**Objet : Votre bilan de brossage et de btabilité existentielle - Semaine 36**
 
 > "Nous avons détecté une pression excessive et répétée sur le quadrant supérieur gauche, corrélée à une fréquence de brossage de 2.8 minutes les jours de semaine, mais de seulement 1.2 minute le week-end. Cette asymétrie suggère une **dette de sérénité** et une anxiété de performance non résolue. Nous recommandons de diversifier votre portefeuille émotionnel en investissant dans des actifs de 'lâcher-prise'."
 
