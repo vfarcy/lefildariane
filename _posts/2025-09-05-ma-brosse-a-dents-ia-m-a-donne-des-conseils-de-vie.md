@@ -5,7 +5,7 @@ title: "Ma brosse à dents IA m'a conseillé de diversifier mon portefeuille ém
 
 # Ma brosse à dents IA m'a conseillé de diversifier mon portefeuille émotionnel
 
-J'ai récemment fait l'acquisition d'une brosse à dents "intelligente". Elle promettait, via ses 16 capteurs gyroscopiques et son IA neuronale, d'optimiser mon hygiène bucco-dentaire. Je m'attendais à des conseils du type "N'oubliez pas les molaires du fond".
+J'ai récemment fait l'acquisition d'une brosse à dents "intelligente". Elle promettait, via ses 32 capteurs gyroscopiques et son IA neuronale, d'optimiser mon hygiène bucco-dentaire. Je m'attendais à des conseils du type "N'oubliez pas les molaires du fond".
 
 J'ai reçu hier mon premier rapport hebdomadaire. Ce n'était pas un rapport dentaire. C'était une intervention.
 
