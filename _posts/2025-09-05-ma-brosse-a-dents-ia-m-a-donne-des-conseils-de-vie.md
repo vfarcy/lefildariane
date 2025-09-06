@@ -23,7 +23,7 @@ Cet incident n'est pas une anecdote. C'est le symptôme d'une croyance absurde d
 * **L'Information (supposée) :** Je suis stressé par le travail.
 * **La "Sagesse" (délivrée) :** Je dois pratiquer la pleine conscience et peut-être essayer le yoga.
 
-C'est une application comique du **biais de corrélation**. Mon habitude de brossage est probablement juste... une habitude. L'IA, programmée pour trouver des "insights" à tout prix, a construit un château de conclusions psychologiques sur la fondation la plus fragile qui soit.
+C'est une application du **biais de corrélation**. Mon habitude de brossage est probablement juste... une habitude. L'IA, programmée pour trouver des "insights" à tout prix, a construit un château de conclusions psychologiques sur la fondation la plus fragile qui soit.
 
 ## La prochaine étape ?
 
