@@ -254,32 +254,5 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
 
-  # TÂCHE 5 : DÉPLOIEMENT SUR OVH (APRÈS GITHUB PAGES)
-  deploy_to_ovh:
-    name: 5. Répliquer sur OVH (SSH)
-    # Ne démarre qu'après le succès du déploiement sur GitHub Pages
-    needs: deploy_site
-    runs-on: ubuntu-latest
-   steps:
-      - name: Download artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: jekyll-site
-          path: ./_site
 
-      - name: Deploy to Server via Rsync
-        uses: easingthemes/ssh-deploy@v5.0.0
-        with:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          REMOTE_HOST: ${{ secrets.SSH_HOST }}
-          REMOTE_USER: ${{ secrets.SSH_USER }}
-          SOURCE: "_site/"
-          TARGET: ${{ secrets.REMOTE_PATH }}
-          EXCLUDE: "/.git/, /.github/"
-          
-          # --- AJOUTS CI-DESSOUS ---
-          # On ajoute des options SSH pour forcer une connexion non-interactive
-          # et améliorer la compatibilité.
-          ARGS: "-rltgoDzv --verbose"
-          SSH_CMD_ARGS: "-oHostKeyAlgorithms=+ssh-rsa -oPubkeyAcceptedAlgorithms=+ssh-rsa"
           
