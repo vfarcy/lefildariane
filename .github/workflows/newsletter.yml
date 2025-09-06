@@ -260,7 +260,7 @@ jobs:
   replicate_to_ovh:
     name: 5. Répliquer sur OVH (SFTP)
     # Ne démarre qu'après le succès du déploiement sur GitHub Pages
-    needs: deploy_to_github_pages
+    needs: build_site
     runs-on: ubuntu-latest
     steps:
       - name: Download artifact
