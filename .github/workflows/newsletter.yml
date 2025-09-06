@@ -253,4 +253,26 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-        
+
+  # TÂCHE 5 : DÉPLOIEMENT SUR OVH (APRÈS GITHUB PAGES)
+  deploy_to_ovh:
+    name: 5. Répliquer sur OVH (SSH)
+    # Ne démarre qu'après le succès du déploiement sur GitHub Pages
+    needs: deploy_site
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifact
+        # On télécharge l'artefact "github-pages" créé à l'étape 3
+        uses: actions/download-artifact@v4
+        with:
+          name: github-pages
+
+      - name: Deploy to Server via Rsync
+        uses: easingthemes/ssh-deploy@v5.0.0
+        with:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          REMOTE_HOST: ${{ secrets.SSH_HOST }}
+          REMOTE_USER: ${{ secrets.SSH_USER }}
+          SOURCE: "./" # Le contenu est à la racine de l'artefact téléchargé
+          TARGET: ${{ secrets.REMOTE_PATH }}
+          EXCLUDE: "/.git/, /.github/"
