@@ -255,32 +255,31 @@ jobs:
         uses: actions/deploy-pages@v4
 
         
-  # TÂCHE 5 : RÉPLIQUER LE SITE SUR OVH (CORRIGÉE)
-  replicate_to_ovh:
-    name: 5. Répliquer sur OVH (SFTP)
+  # --- TÂCHE DE DÉPLOIEMENT MODIFIÉE ---
+  # TÂCHE 5 : DÉPLOYER LE SITE SUR OVH (VIA SSH/RSYNC)
+  deploy_to_ovh:
+    name: 4. Déployer le Site (OVH via SSH)
     needs: deploy_site
     runs-on: ubuntu-latest
     steps:
       - name: Download artifact
-        # --- LA CORRECTION EST ICI ---
-        # On utilise l'action générique "download-artifact"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v3
         with:
-          # On spécifie le nom de l'artefact créé par l'étape de build.
-          # Par défaut, "upload-pages-artifact" nomme l'artefact "github-pages".
-          name: github-pages
+          name: jekyll-site
+          path: ./_site
 
-      - name: Deploy to OVH via SFTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      - name: Deploy to Server via Rsync
+        uses: easingthemes/ssh-deploy@v5.0.0
         with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          protocol: sftp
-          port: 22
-          local-dir: ./ # L'artefact est téléchargé à la racine du workspace
-          remote-dir: ${{ secrets.REMOTE_PATH }}
-          cleanup: true
-
-          
-          
+          # Clé privée SSH depuis les secrets
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          # Adresse du serveur
+          REMOTE_HOST: ${{ secrets.SSH_HOST }}
+          # Nom d'utilisateur
+          REMOTE_USER: ${{ secrets.SSH_USER }}
+          # Dossier source à envoyer
+          SOURCE: "_site/"
+          # Dossier de destination sur le serveur
+          TARGET: ${{ secrets.REMOTE_PATH }}
+          # Exclure des fichiers si nécessaire
+          EXCLUDE: "/.git/, /.github/"
