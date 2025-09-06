@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Ma brosse à dents IA m'a conseillé de diversifier mon portefeuille émotionnel"
+title: "Ma brosse à dents intelligente m'a conseillé de diversifier mon portefeuille émotionnel"
 ---
 
 # Ma brosse à dents IA m'a conseillé de diversifier mon portefeuille émotionnel
