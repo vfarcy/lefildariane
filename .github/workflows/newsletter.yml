@@ -262,10 +262,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download artifact
-        # On télécharge l'artefact "github-pages" créé à l'étape 3
         uses: actions/download-artifact@v4
         with:
-          name: github-pages
+          name: jekyll-site
+          path: ./_site
 
       - name: Deploy to Server via Rsync
         uses: easingthemes/ssh-deploy@v5.0.0
@@ -273,10 +273,13 @@ jobs:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           REMOTE_HOST: ${{ secrets.SSH_HOST }}
           REMOTE_USER: ${{ secrets.SSH_USER }}
-          SOURCE: "./" # Le contenu est à la racine de l'artefact téléchargé
+          
+          # --- CORRECTIONS CI-DESSOUS ---
+          # On enlève le "/" final de la source
+          SOURCE: "_site" 
+          # On s'assure que le chemin distant est propre
           TARGET: ${{ secrets.REMOTE_PATH }}
-                    # --- LA CORRECTION EST ICI ---
-          # On désactive la vérification stricte de la clé de l'hôte
-          # pour éviter que la connexion ne se bloque en attendant une validation.
-          SSH_STRICT_HOST_KEY_CHECKING: 'no'
+          
           EXCLUDE: "/.git/, /.github/"
+          # On ajoute une option pour un log plus détaillé
+          ARGS: "-rltgoDzv --verbose"
