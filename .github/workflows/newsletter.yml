@@ -255,33 +255,32 @@ jobs:
         uses: actions/deploy-pages@v4
 
         
-# --- NOUVELLE TÂCHE ---
-  # TÂCHE 5 : RÉPLIQUER LE SITE SUR OVH
+  # TÂCHE 5 : RÉPLIQUER LE SITE SUR OVH (CORRIGÉE)
   replicate_to_ovh:
     name: 5. Répliquer sur OVH (SFTP)
-    # Ne démarre qu'après le succès du déploiement sur GitHub Pages
-    needs: build_site
+    needs: deploy_site
     runs-on: ubuntu-latest
     steps:
       - name: Download artifact
-        # On récupère le site qui a été construit à l'étape 3
-        uses: actions/download-pages-artifact@v3
+        # --- LA CORRECTION EST ICI ---
+        # On utilise l'action générique "download-artifact"
+        uses: actions/download-artifact@v3
+        with:
+          # On spécifie le nom de l'artefact créé par l'étape de build.
+          # Par défaut, "upload-pages-artifact" nomme l'artefact "github-pages".
+          name: github-pages
 
       - name: Deploy to OVH via SFTP
-        # On utilise une action populaire pour le déploiement SFTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
-          # Informations du serveur lues depuis les secrets
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          protocol: sftp # Important: protocole sécurisé
-          port: 22 # Port par défaut pour SFTP
-
-          # Dossiers source et destination
-          local-dir: ./ # Le dossier où l'artefact a été téléchargé
-          remote-dir: ${{ secrets.REMOTE_PATH }} # Le dossier 'www' sur votre serveur
-          
-          # Option pour nettoyer le dossier de destination avant le transfert
+          protocol: sftp
+          port: 22
+          local-dir: ./ # L'artefact est téléchargé à la racine du workspace
+          remote-dir: ${{ secrets.REMOTE_PATH }}
           cleanup: true
+
+          
           
