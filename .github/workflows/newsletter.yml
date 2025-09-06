@@ -264,7 +264,7 @@ jobs:
       - name: Download artifact
         # --- LA CORRECTION EST ICI ---
         # On utilise l'action générique "download-artifact"
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           # On spécifie le nom de l'artefact créé par l'étape de build.
           # Par défaut, "upload-pages-artifact" nomme l'artefact "github-pages".
