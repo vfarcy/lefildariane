@@ -17,7 +17,7 @@ Mon appareil, conçu pour combattre la plaque dentaire, était en train de me ps
 
 ## Le bug de la "smartification"
 
-Cet incident n'est pas juste une anecdote. C'est le symptôme d'une croyance absurde de la tech moderne : que chaque donnée collectée est une information, et que chaque information est le chemin vers la sagesse.
+Cet incident n'est pas une anecdote. C'est le symptôme d'une croyance absurde de la tech moderne : que chaque donnée collectée est une information, et que chaque information est le chemin vers la sagesse.
 
 * **La Donnée :** Je brosse mes dents plus fort le lundi.
 * **L'Information (supposée) :** Je suis stressé par le travail.
