@@ -10,7 +10,7 @@ Le flux constant d'informations, la difficulté de distinguer le signal du bruit
 
 Nous sommes probablement tous un peu perdus dans le labyrinthe de notre époque face à des minotaures technologiques qui souvent nous dépassent. Par chance, comme dans le mythe, il existe une direction pour ne pas se perdre; une voie pour penser, pour questionner, et pour tracer un chemin intelligible.
 
-C'est pour cette raison que je lance « Le fil d'Ariane » 🧵, un média pour pour celles et ceux qui cherchent à dérouler une pensée claire et rigoureuse au milieu du chaos.
+C'est pour cette raison que je lance « Le fil d'Ariane » 🧵, un espace pour pour celles et ceux qui cherchent à dérouler une pensée claire et rigoureuse au milieu du chaos.
 
 « Le fil d'Ariane » s'adresse aux esprits curieux, aux sceptiques méthodiques, aux développeurs philosophes, et à celles et ceux qui pensent que la bonne question est toujours plus importante que la réponse immédiate.
 
