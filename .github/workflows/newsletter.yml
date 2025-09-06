@@ -268,6 +268,21 @@ jobs:
         with:
           name: github-pages
 
+      # --- DÉBUT DES ÉTAPES DE DÉBOGAGE ---
+      - name: "DEBUG : Vérifier les variables d'environnement"
+        run: |
+          echo "Utilisateur SSH (SSH_USER): ${{ secrets.SSH_USER }}"
+          echo "Hôte SSH (SSH_HOST): ${{ secrets.SSH_HOST }}"
+          echo "Dossier de destination (REMOTE_PATH): ${{ secrets.REMOTE_PATH }}"
+
+      - name: "DEBUG : Lister les fichiers à déployer"
+        run: |
+          echo "Contenu du dossier '_site' qui sera envoyé :"
+          ls -laR ./_site
+      # --- FIN DES ÉTAPES DE DÉBOGAGE ---
+
+      
+
       - name: Deploy to Server via Rsync
         uses: easingthemes/ssh-deploy@v5.0.0
         with:
