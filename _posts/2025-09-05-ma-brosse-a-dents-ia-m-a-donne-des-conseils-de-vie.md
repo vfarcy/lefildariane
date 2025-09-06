@@ -15,7 +15,7 @@ J'ai reçu hier mon premier rapport hebdomadaire. Ce n'était pas un rapport den
 
 Mon appareil, conçu pour combattre la plaque dentaire, était en train de me psychanalyser.
 
-## Le bug de la "Smartification"
+## Le bug de la "smartification"
 
 Cet incident n'est pas juste une anecdote. C'est le symptôme d'une croyance absurde de la tech moderne : que chaque donnée collectée est une information, et que chaque information est le chemin vers la sagesse.
 
